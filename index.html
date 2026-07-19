@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ciaowenxu-qwqのBlog</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- KaTeX 样式 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,7 +58,6 @@
         <nav class="navbar">
             <div class="logo">
                 <i class="fas fa-blog"></i>
-                <!-- 修改点：CodeBlog -> ciaowenxu-qwqのBlog -->
                 <span>ciaowenxu-qwqのBlog</span>
             </div>
             <button class="theme-toggle" id="themeToggle">
@@ -102,6 +105,7 @@
                 <ul>
                     <li><i class="fas fa-check"></i> Markdown风格的文章渲染</li>
                     <li><i class="fas fa-check"></i> 代码高亮显示</li>
+                    <li><i class="fas fa-check"></i> LaTeX数学公式渲染</li>
                     <li><i class="fas fa-check"></i> 深色/浅色主题切换</li>
                     <li><i class="fas fa-check"></i> 响应式设计</li>
                     <li><i class="fas fa-check"></i> 迷你袋鼠四散特效 🦘</li>
@@ -112,7 +116,7 @@
     </main>
 
     <footer class="footer">
-        <p>&copy; 2025 xiaowenxu-qwqのBlog | 使用HTML/CSS/JS构建</p>
+        <p>&copy; 2024 ciaowenxu-qwqのBlog | 使用HTML/CSS/JS构建</p>
         <div class="social-links">
             <a href="#"><i class="fab fa-github"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -120,8 +124,14 @@
         </div>
     </footer>
 
+    <!-- 脚本引入顺序很重要 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    
+    <!-- KaTeX 核心及自动渲染 -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

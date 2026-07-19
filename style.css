@@ -106,7 +106,7 @@ body {
     transition: var(--transition);
     white-space: nowrap;
     color: var(--primary-color);
-    font-Weight: 600;
+    font-weight: 600;
 }
 
 .sidebar:hover .sidebar-title {
@@ -463,7 +463,26 @@ body {
     display: none;
 }
 
-/* 响应式设计 */
+/* =======================
+   KaTeX 公式样式优化
+   ======================= */
+.katex {
+    font-size: 1.1em;
+}
+
+.katex-display {
+    padding: 1rem 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.dark-theme .katex {
+    color: var(--text-color);
+}
+
+/* =======================
+   响应式设计
+   ======================= */
 @media (max-width: 768px) {
     .sidebar {
         width: 0;

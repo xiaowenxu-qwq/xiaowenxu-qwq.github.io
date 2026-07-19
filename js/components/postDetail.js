@@ -16,6 +16,18 @@ export function showPostDetail(postId, posts) {
         hljs.highlightElement(block);
     });
     
+    // ===== 新增：渲染 LaTeX 公式 =====
+    renderMathInElement(postContent, {
+        delimiters: [
+            { left: '$$', right: '$$', display: true },  // 块级公式
+            { left: '$', right: '$', display: false },   // 行内公式
+            { left: '\\(', right: '\\)', display: false },
+            { left: '\\[', right: '\\]', display: true }
+        ],
+        throwOnError: false // 避免报错导致页面白屏
+    });
+    // ================================
+    
     // 显示详情，隐藏列表
     postsSection.classList.add('hidden');
     postDetail.classList.remove('hidden');
