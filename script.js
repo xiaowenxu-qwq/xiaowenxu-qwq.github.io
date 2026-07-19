@@ -7,64 +7,8 @@ const posts = [
         category: "JavaScript",
         excerpt: "深入探讨Promise、async/await和事件循环机制...",
         tags: ["JavaScript", "异步", "Promise"],
-        content: `
-# JavaScript异步编程指南
-
-在现代Web开发中，异步编程是必不可少的技能。本文将深入探讨JavaScript中的异步模式。
-
-## Promise基础
-
-Promise是处理异步操作的对象：
-
-\`\`\`javascript
-const fetchData = () => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve("数据加载成功！");
-        }, 2000);
-    });
-};
-
-fetchData().then(data => {
-    console.log(data); // "数据加载成功！"
-});
-\`\`\`
-
-## async/await语法糖
-
-ES2017引入的async/await让异步代码更易读：
-
-\`\`\`javascript
-async function loadData() {
-    try {
-        const data = await fetchData();
-        console.log(data);
-        return data;
-    } catch (error) {
-        console.error("加载失败:", error);
-    }
-}
-\`\`\`
-
-## 事件循环机制
-
-JavaScript运行时包含：
-- **调用栈**：执行同步代码
-- **任务队列**：存放异步回调
-- **微任务队列**：Promise回调优先级更高
-
-> 理解事件循环是掌握异步编程的关键！
-
-## 最佳实践
-
-1. 始终处理Promise拒绝
-2. 避免回调地狱
-3. 合理使用Promise.all并行处理
-4. 使用async/await提高可读性
-
----
-*异步编程需要实践才能掌握，多写代码是关键！*
-        `
+        content: `# JavaScript异步编程指南
+在现代Web开发中，异步编程是必不可少的技能...`
     },
     {
         id: 2,
@@ -73,71 +17,8 @@ JavaScript运行时包含：
         category: "CSS",
         excerpt: "掌握现代CSS布局利器，创建响应式网页设计...",
         tags: ["CSS", "Grid", "响应式"],
-        content: `
-# CSS Grid布局完全指南
-
-CSS Grid是创建二维布局的强大工具，比Flexbox更适合整体页面布局。
-
-## 基本概念
-
-\`\`\`css
-.container {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr; /* 三列布局 */
-    grid-template-rows: auto;
-    gap: 20px; /* 网格间距 */
-}
-\`\`\`
-
-## 常用属性
-
-### 容器属性
-- \`grid-template-columns\`: 定义列的大小和数量
-- \`grid-template-rows\`: 定义行的大小和数量
-- \`gap\`: 网格间距
-- \`justify-items\`: 水平对齐
-- \`align-items\`: 垂直对齐
-
-### 项目属性
-- \`grid-column\`: 项目跨越的列
-- \`grid-row\`: 项目跨越的行
-- \`justify-self\`: 单个项目水平对齐
-- \`align-self\`: 单个项目垂直对齐
-
-## 响应式布局示例
-
-\`\`\`css
-/* 移动端优先 */
-.grid-container {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-}
-
-/* 平板设备 */
-@media (min-width: 768px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* 桌面设备 */
-@media (min-width: 1024px) {
-    .grid-container {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-\`\`\`
-
-## 实用技巧
-
-1. 使用\`fr\`单位创建弹性布局
-2. 结合Flexbox处理一维布局
-3. 使用\`minmax()\`函数设置尺寸范围
-4. 利用\`grid-area\`命名网格区域
-
-CSS Grid彻底改变了我们创建网页布局的方式，值得深入学习！
-        `
+        content: `# CSS Grid布局完全指南
+CSS Grid是创建二维布局的强大工具...`
     },
     {
         id: 3,
@@ -146,104 +27,11 @@ CSS Grid彻底改变了我们创建网页布局的方式，值得深入学习！
         category: "工具",
         excerpt: "开发必备的Git命令集合，提高版本控制效率...",
         tags: ["Git", "版本控制", "命令行"],
-        content: `
-# Git常用命令速查表
-
+        content: `# Git常用命令速查表
 ## 基础配置
-
-\`\`\`bash
-# 设置用户名和邮箱
-git config --global user.name "你的名字"
-git config --global user.email "你的邮箱"
-
-# 查看配置
-git config --list
-\`\`\`
-
-## 仓库操作
-
-\`\`\`bash
-# 初始化新仓库
-git init
-
-# 克隆远程仓库
-git clone <repository-url>
-
-# 查看远程仓库
-git remote -v
-\`\`\`
-
-## 日常工作流
-
-\`\`\`bash
-# 检查状态
-git status
-
-# 添加文件到暂存区
-git add <file>      # 添加指定文件
-git add .           # 添加所有修改
-
-# 提交更改
-git commit -m "提交信息"
-
-# 推送到远程
-git push origin main
-
-# 拉取更新
-git pull origin main
-\`\`\`
-
-## 分支管理
-
-\`\`\`bash
-# 创建并切换分支
-git checkout -b <branch-name>
-
-# 列出所有分支
-git branch
-
-# 合并分支
-git merge <branch-name>
-
-# 删除分支
-git branch -d <branch-name>
-\`\`\`
-
-## 撤销更改
-
-\`\`\`bash
-# 撤销工作区修改
-git checkout -- <file>
-
-# 撤销暂存区修改
-git reset HEAD <file>
-
-# 修改最后一次提交
-git commit --amend
-\`\`\`
-
-## 查看历史
-
-\`\`\`bash
-# 查看提交日志
-git log
-git log --oneline --graph
-
-# 查看文件差异
-git diff
-git diff --staged
-\`\`\`
-
-## 实用技巧
-
-1. 使用\`.gitignore\`忽略不需要跟踪的文件
-2. 定期执行\`git gc\`清理仓库
-3. 使用别名简化常用命令
-4. 学习交互式暂存(\`git add -p\`)
-
-记住：频繁提交，有意义的提交信息，及时推送！
-        `
-    },{
+...`
+    },
+    {
         id: 4,
         title: "测试1",
         date: "2026-7-19",
@@ -251,14 +39,15 @@ git diff --staged
         excerpt: "测试1.2",
         tags: ["测试1.3.1", "测试1.3.2", "测试1.3.3"],
         content: "测试1.4:"
-    },{
+    },
+    {
         id: 5,
         title: "论存在的碎片：一则关于虚无的注脚",
         date: "2026-7-19",
         category: "文章",
         excerpt: "名言风暴席卷逻辑废墟，一场荒诞而华丽的思想拼贴盛宴。",
         tags: ["可读性强", "逻辑性强", "名言广泛"],
-        content: `论存在的碎片：一则关于虚无的注脚
+        content: `# 论存在的碎片：一则关于虚无的注脚
 
 亚里士多德曾言：“存在之为存在，其意义究竟何在？”然而，正如尼采在《查拉图斯特拉如是说》中所咆哮的，“上帝死了”，那么存在的基石便也随之崩塌，如同特洛伊木马腹中藏匿的士兵，突然涌出，却发现城外空无一物。我吃了一个苹果，果皮是红的，这让我想起毕加索的蓝色时期，他说：“艺术是一个谎言，但它说真话。”可谁又能证明苹果的红色不是一种光谱的骗局？就像笛卡尔怀疑一切时，唯留下“我思故我在”，但叔本华立刻反驳：“意志是第一性的，理智只是其客体化。”那么，当我咀嚼苹果时，究竟是我在思考苹果，还是苹果的意志借由我的牙齿得以显现？维特根斯坦在《逻辑哲学论》结尾处叹息：“凡不可言说者，必保持沉默。”但此刻我却忍不住要谈论这苹果的沉默，它的沉默比任何雄辩都更接近老子的“大音希声”。
 
@@ -303,7 +92,6 @@ git diff --staged
 一阵微风吹过，书页轻轻翻动，露出了下面的文字：“我思故我在。”笛卡尔的这句名言，曾被视为现代哲学的基石。但尼采嘲讽说，这不过是“我思”这个语法结构的产物，仿佛有一个“我”在“思”。拉康则进一步指出，“我”是一个虚构的统一体，是语言的建构。那么，“我思故我在”中的“我”，究竟是谁？是那个正在写作的我，还是那个被语言建构的“主体”？萨特说：“他人即地狱。”因为他人的目光会将我客体化，剥夺我的主体性。那么，当我审视自己时，是否也在将自己客体化？这让我想起梅洛-庞蒂的“身体主体”概念，他认为主体不是纯粹的意识，而是 embodied 的主体，通过身体与世界互动。那么，“我思”的背后，其实是一个“我能”——我能感知，我能行动，我能思考。但这种“我能”，是否也受到了社会和历史条件的制约？正如福柯在《规训与惩罚》中所揭示的，权力通过各种微观技术，塑造着我们的身体和行为。那么，我的“我能”，是否也只是权力运作的结果？
 
 时钟的指针指向了午夜，一天即将结束。这让我想起诺瓦利斯的“浪漫主义反讽”，认为世界本质上是矛盾的，我们应该以一种反讽的态度对待它。那么，我对这一天的思考，是否也应该带着一丝反讽？因为我所思考的一切，都可能是虚幻的，就像庄周梦蝶，不知周之梦为蝴蝶与，蝴蝶之梦为周与？但黑格尔的辩证法告诉我们，矛盾是推动事物发展的动力，没有矛盾，就没有进步。那么，这种反讽的态度，是否也是一种辩证的环节？或者，正如克尔凯郭尔在《非此即彼》中所说，人生充满了非此即彼的选择，我们无法回避。那么，我选择以反讽的态度结束这一天，是否也是一种选择？但这选择本身，是否也受到了我之前所有思考的影响？这是一个无限递归的问题，没有终点。或许，正如维特根斯坦在《逻辑哲学论》的最后所说：“对于不可言说之物，必须保持沉默。”那么，关于这一天的思考，也该到此为止了。但沉默之后，又会是什么呢？是新的思考，还是彻底的虚无？这让我想起老子的一句话：“天下万物生于有，有生于无。”那么，这沉默，或许就是新的“有”的起点。但谁又能说得清呢？`
-
     }
 ];
 
@@ -315,7 +103,7 @@ const backBtn = document.getElementById('backBtn');
 const themeToggle = document.getElementById('themeToggle');
 
 // 初始化
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     renderPosts();
     setupEventListeners();
     initializeTheme();
@@ -325,12 +113,12 @@ document.addEventListener('DOMContentLoaded', function() {
 // 渲染文章列表
 function renderPosts() {
     postsContainer.innerHTML = '';
-    
+
     posts.forEach(post => {
         const postElement = document.createElement('article');
         postElement.className = 'post-card';
         postElement.dataset.id = post.id;
-        
+
         postElement.innerHTML = `
             <div class="post-header">
                 <h3 class="post-title">${post.title}</h3>
@@ -339,92 +127,36 @@ function renderPosts() {
                     <span><i class="fas fa-tag"></i> ${post.category}</span>
                 </div>
             </div>
-            <div class="post-excerpt">
-                ${post.excerpt}
-            </div>
+            <div class="post-excerpt">${post.excerpt}</div>
             <div class="post-tags">
                 ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
             </div>
         `;
-        
+
         postsContainer.appendChild(postElement);
     });
 }
 
 // 设置事件监听器
 function setupEventListeners() {
-    // 文章点击事件
-    postsContainer.addEventListener('click', function(e) {
+    // 文章点击
+    postsContainer.addEventListener('click', function (e) {
         const postCard = e.target.closest('.post-card');
         if (postCard) {
             const postId = parseInt(postCard.dataset.id);
             showPostDetail(postId);
         }
-        // 袋鼠点击特效
-        function createKangaroos(x, y) {
-            const kangarooCount = Math.floor(Math.random() * 3) + 3; // 3-5只袋鼠
-            const kangarooEmojis = ['🦘', '🦘', '🦘', '💨', '✨']; // 袋鼠和特效emoji
-            
-            for (let i = 0; i < kangarooCount; i++) {
-                const kangaroo = document.createElement('div');
-                kangaroo.className = 'kangaroo';
-                kangaroo.textContent = kangarooEmojis[Math.floor(Math.random() * kangarooEmojis.length)];
-                
-                // 随机旋转角度（-75到75度之间）
-                const rotationAngle = (Math.random() * 150 - 75);
-                
-                // 随机水平偏移
-                const horizontalOffset = (Math.random() - 0.5) * 100;
-                
-                // 设置初始位置
-                kangaroo.style.left = `${x + horizontalOffset}px`;
-                kangaroo.style.top = `${y}px`;
-                kangaroo.style.setProperty('--rotation-angle', `${rotationAngle}deg`);
-                
-                // 添加到页面
-                document.body.appendChild(kangaroo);
-                
-                // 触发动画
-                setTimeout(() => {
-                    kangaroo.classList.add('falling');
-                    
-                    // 动画结束后移除元素
-                    setTimeout(() => {
-                        kangaroo.remove();
-                    }, 1000);
-                }, i * 100); // 错开动画开始时间
-    }
-}
-
-// 添加全局点击事件监听
-document.addEventListener('click', function(e) {
-    // 排除特定元素的点击（避免干扰原有功能）
-    const excludedElements = ['a', 'button', '.post-card', '.theme-toggle', '.back-btn'];
-    let isExcluded = false;
-    
-    for (const selector of excludedElements) {
-        if (e.target.matches(selector) || e.target.closest(selector)) {
-            isExcluded = true;
-            break;
-        }
-    }
-    
-    // 如果不是排除元素，则创建袋鼠特效
-    if (!isExcluded) {
-        createKangaroos(e.clientX, e.clientY);
-    }
-});
     });
-    
+
     // 返回按钮
     backBtn.addEventListener('click', hidePostDetail);
-    
+
     // 主题切换
     themeToggle.addEventListener('click', toggleTheme);
-    
-    // 平滑滚动导航
+
+    // 平滑滚动
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
@@ -437,24 +169,57 @@ document.addEventListener('click', function(e) {
     });
 }
 
+// ===== 袋鼠点击特效 =====
+function createKangaroos(x, y) {
+    const kangarooCount = Math.floor(Math.random() * 3) + 3;
+    const kangarooEmojis = ['🦘', '🦘', '🦘', '💨', '✨'];
+
+    for (let i = 0; i < kangarooCount; i++) {
+        const kangaroo = document.createElement('div');
+        kangaroo.className = 'kangaroo';
+        kangaroo.textContent = kangarooEmojis[Math.floor(Math.random() * kangarooEmojis.length)];
+
+        const rotationAngle = Math.random() * 150 - 75;
+        const horizontalOffset = (Math.random() - 0.5) * 100;
+
+        kangaroo.style.left = `${x + horizontalOffset}px`;
+        kangaroo.style.top = `${y}px`;
+        kangaroo.style.setProperty('--rotation-angle', `${rotationAngle}deg`);
+
+        document.body.appendChild(kangaroo);
+
+        setTimeout(() => {
+            kangaroo.classList.add('falling');
+            setTimeout(() => kangaroo.remove(), 1000);
+        }, i * 100);
+    }
+}
+
+// 全局点击监听（只保留这一个！）
+document.addEventListener('click', function (e) {
+    const excludedSelectors = ['a', 'button', '.post-card', '.theme-toggle', '.back-btn'];
+
+    const isExcluded = excludedSelectors.some(selector =>
+        e.target.matches(selector) || e.target.closest(selector)
+    );
+
+    if (!isExcluded) {
+        createKangaroos(e.clientX, e.clientY);
+    }
+});
+
 // 显示文章详情
 function showPostDetail(id) {
     const post = posts.find(p => p.id === id);
     if (!post) return;
-    
-    // 使用marked解析Markdown
+
     postContent.innerHTML = marked.parse(post.content);
-    
-    // 高亮代码块
     postContent.querySelectorAll('pre code').forEach(block => {
-        hljs.highlightBlock(block);
+        hljs.highlightElement(block);
     });
-    
-    // 显示详情，隐藏列表
+
     document.getElementById('posts').classList.add('hidden');
     postDetail.classList.remove('hidden');
-    
-    // 滚动到顶部
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -468,25 +233,24 @@ function hidePostDetail() {
 function toggleTheme() {
     const body = document.body;
     const icon = themeToggle.querySelector('i');
-    
+
     body.classList.toggle('dark-theme');
-    
-    if (body.classList.contains('dark-theme')) {
-        icon.className = 'fas fa-sun';
-        localStorage.setItem('theme', 'dark');
-    } else {
-        icon.className = 'fas fa-moon';
-        localStorage.setItem('theme', 'light');
-    }
+    icon.className = body.classList.contains('dark-theme')
+        ? 'fas fa-sun'
+        : 'fas fa-moon';
+
+    localStorage.setItem('theme', body.classList.contains('dark-theme') ? 'dark' : 'light');
 }
 
 // 初始化主题
 function initializeTheme() {
     const savedTheme = localStorage.getItem('theme');
     const icon = themeToggle.querySelector('i');
-    
-    if (savedTheme === 'dark' || 
-        (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+
+    if (
+        savedTheme === 'dark' ||
+        (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
         document.body.classList.add('dark-theme');
         icon.className = 'fas fa-sun';
     } else {
