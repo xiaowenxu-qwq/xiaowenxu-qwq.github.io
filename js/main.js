@@ -38,14 +38,6 @@ function setupEventListeners() {
     // 主题切换
     themeToggle?.addEventListener('click', toggleTheme);
     
-    // 平滑滚动导航（顶部导航）
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            smoothScrollTo(this.getAttribute('href'));
-        });
-    });
-    
     // 袋鼠点击特效（全屏响应）
     document.addEventListener('click', function(e) {
         spawnKangaroos(e.clientX, e.clientY);
