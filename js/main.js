@@ -38,7 +38,7 @@ function setupEventListeners() {
     // 主题切换
     themeToggle?.addEventListener('click', toggleTheme);
     
-    // 平滑滚动导航
+    // 平滑滚动导航（顶部导航）
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -49,5 +49,41 @@ function setupEventListeners() {
     // 袋鼠点击特效（全屏响应）
     document.addEventListener('click', function(e) {
         spawnKangaroos(e.clientX, e.clientY);
+    });
+
+    // =======================
+    // 侧边栏相关逻辑
+    // =======================
+    const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+    // 点击侧边栏链接高亮
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            sidebarLinks.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+            smoothScrollTo(this.getAttribute('href'));
+        });
+    });
+
+    // 滚动时自动高亮侧边栏对应项
+    window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('section[id]');
+        const scrollPos = window.scrollY + 100;
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.clientHeight;
+            const sectionId = '#' + section.getAttribute('id');
+
+            if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                sidebarLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === sectionId) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
     });
 }
