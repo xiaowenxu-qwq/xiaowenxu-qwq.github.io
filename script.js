@@ -360,6 +360,60 @@ function setupEventListeners() {
             const postId = parseInt(postCard.dataset.id);
             showPostDetail(postId);
         }
+        // 袋鼠点击特效
+        function createKangaroos(x, y) {
+            const kangarooCount = Math.floor(Math.random() * 3) + 3; // 3-5只袋鼠
+            const kangarooEmojis = ['🦘', '🦘', '🦘', '💨', '✨']; // 袋鼠和特效emoji
+            
+            for (let i = 0; i < kangarooCount; i++) {
+                const kangaroo = document.createElement('div');
+                kangaroo.className = 'kangaroo';
+                kangaroo.textContent = kangarooEmojis[Math.floor(Math.random() * kangarooEmojis.length)];
+                
+                // 随机旋转角度（-75到75度之间）
+                const rotationAngle = (Math.random() * 150 - 75);
+                
+                // 随机水平偏移
+                const horizontalOffset = (Math.random() - 0.5) * 100;
+                
+                // 设置初始位置
+                kangaroo.style.left = `${x + horizontalOffset}px`;
+                kangaroo.style.top = `${y}px`;
+                kangaroo.style.setProperty('--rotation-angle', `${rotationAngle}deg`);
+                
+                // 添加到页面
+                document.body.appendChild(kangaroo);
+                
+                // 触发动画
+                setTimeout(() => {
+                    kangaroo.classList.add('falling');
+                    
+                    // 动画结束后移除元素
+                    setTimeout(() => {
+                        kangaroo.remove();
+                    }, 1000);
+                }, i * 100); // 错开动画开始时间
+    }
+}
+
+// 添加全局点击事件监听
+document.addEventListener('click', function(e) {
+    // 排除特定元素的点击（避免干扰原有功能）
+    const excludedElements = ['a', 'button', '.post-card', '.theme-toggle', '.back-btn'];
+    let isExcluded = false;
+    
+    for (const selector of excludedElements) {
+        if (e.target.matches(selector) || e.target.closest(selector)) {
+            isExcluded = true;
+            break;
+        }
+    }
+    
+    // 如果不是排除元素，则创建袋鼠特效
+    if (!isExcluded) {
+        createKangaroos(e.clientX, e.clientY);
+    }
+});
     });
     
     // 返回按钮

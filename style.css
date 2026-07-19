@@ -354,3 +354,27 @@ body {
         grid-template-columns: 1fr;
     }
 }
+/* 袋鼠动画样式 */
+.kangaroo {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 24px;
+    opacity: 1;
+    transition: all 1s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+
+.kangaroo.falling {
+    animation: kangarooFall 1s forwards cubic-bezier(0.55, 0.085, 0.68, 0.53);
+}
+
+@keyframes kangarooFall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(100px) rotate(var(--rotation-angle)) scale(0.2);
+    }
+}
