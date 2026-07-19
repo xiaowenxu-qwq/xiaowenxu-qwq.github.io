@@ -1,5 +1,5 @@
 // =======================
-// 文章数据
+// 文章数据（完整）
 // =======================
 const posts = [
     {
@@ -9,7 +9,64 @@ const posts = [
         category: "JavaScript",
         excerpt: "深入探讨Promise、async/await和事件循环机制...",
         tags: ["JavaScript", "异步", "Promise"],
-        content: "# JavaScript异步编程指南\n\n在现代Web开发中..."
+        content: `
+# JavaScript异步编程指南
+
+在现代Web开发中，异步编程是必不可少的技能。本文将深入探讨JavaScript中的异步模式。
+
+## Promise基础
+
+Promise是处理异步操作的对象：
+
+\`\`\`javascript
+const fetchData = () => {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve("数据加载成功！");
+        }, 2000);
+    });
+};
+
+fetchData().then(data => {
+    console.log(data); // "数据加载成功！"
+});
+\`\`\`
+
+## async/await语法糖
+
+ES2017引入的async/await让异步代码更易读：
+
+\`\`\`javascript
+async function loadData() {
+    try {
+        const data = await fetchData();
+        console.log(data);
+        return data;
+    } catch (error) {
+        console.error("加载失败:", error);
+    }
+}
+\`\`\`
+
+## 事件循环机制
+
+JavaScript运行时包含：
+- **调用栈**：执行同步代码
+- **任务队列**：存放异步回调
+- **微任务队列**：Promise回调优先级更高
+
+> 理解事件循环是掌握异步编程的关键！
+
+## 最佳实践
+
+1. 始终处理Promise拒绝
+2. 避免回调地狱
+3. 合理使用Promise.all并行处理
+4. 使用async/await提高可读性
+
+---
+*异步编程需要实践才能掌握，多写代码是关键！*
+        `
     },
     {
         id: 2,
@@ -18,7 +75,71 @@ const posts = [
         category: "CSS",
         excerpt: "掌握现代CSS布局利器，创建响应式网页设计...",
         tags: ["CSS", "Grid", "响应式"],
-        content: "# CSS Grid布局完全指南\n\nCSS Grid是创建二维布局的强大工具..."
+        content: `
+# CSS Grid布局完全指南
+
+CSS Grid是创建二维布局的强大工具，比Flexbox更适合整体页面布局。
+
+## 基本概念
+
+\`\`\`css
+.container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr; /* 三列布局 */
+    grid-template-rows: auto;
+    gap: 20px; /* 网格间距 */
+}
+\`\`\`
+
+## 常用属性
+
+### 容器属性
+- \`grid-template-columns\`: 定义列的大小和数量
+- \`grid-template-rows\`: 定义行的大小和数量
+- \`gap\`: 网格间距
+- \`justify-items\`: 水平对齐
+- \`align-items\`: 垂直对齐
+
+### 项目属性
+- \`grid-column\`: 项目跨越的列
+- \`grid-row\`: 项目跨越的行
+- \`justify-self\`: 单个项目水平对齐
+- \`align-self\`: 单个项目垂直对齐
+
+## 响应式布局示例
+
+\`\`\`css
+/* 移动端优先 */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+/* 平板设备 */
+@media (min-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 桌面设备 */
+@media (min-width: 1024px) {
+    .grid-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+\`\`\`
+
+## 实用技巧
+
+1. 使用\`fr\`单位创建弹性布局
+2. 结合Flexbox处理一维布局
+3. 使用\`minmax()\`函数设置尺寸范围
+4. 利用\`grid-area\`命名网格区域
+
+CSS Grid彻底改变了我们创建网页布局的方式，值得深入学习！
+        `
     },
     {
         id: 3,
@@ -27,25 +148,167 @@ const posts = [
         category: "工具",
         excerpt: "开发必备的Git命令集合，提高版本控制效率...",
         tags: ["Git", "版本控制", "命令行"],
-        content: "# Git常用命令速查表\n\n## 基础配置\n```bash\ngit config...\n```"
+        content: `
+# Git常用命令速查表
+
+## 基础配置
+
+\`\`\`bash
+# 设置用户名和邮箱
+git config --global user.name "你的名字"
+git config --global user.email "你的邮箱"
+
+# 查看配置
+git config --list
+\`\`\`
+
+## 仓库操作
+
+\`\`\`bash
+# 初始化新仓库
+git init
+
+# 克隆远程仓库
+git clone <repository-url>
+
+# 查看远程仓库
+git remote -v
+\`\`\`
+
+## 日常工作流
+
+\`\`\`bash
+# 检查状态
+git status
+
+# 添加文件到暂存区
+git add <file>      # 添加指定文件
+git add .           # 添加所有修改
+
+# 提交更改
+git commit -m "提交信息"
+
+# 推送到远程
+git push origin main
+
+# 拉取更新
+git pull origin main
+\`\`\`
+
+## 分支管理
+
+\`\`\`bash
+# 创建并切换分支
+git checkout -b <branch-name>
+
+# 列出所有分支
+git branch
+
+# 合并分支
+git merge <branch-name>
+
+# 删除分支
+git branch -d <branch-name>
+\`\`\`
+
+## 撤销更改
+
+\`\`\`bash
+# 撤销工作区修改
+git checkout -- <file>
+
+# 撤销暂存区修改
+git reset HEAD <file>
+
+# 修改最后一次提交
+git commit --amend
+\`\`\`
+
+## 查看历史
+
+\`\`\`bash
+# 查看提交日志
+git log
+git log --oneline --graph
+
+# 查看文件差异
+git diff
+git diff --staged
+\`\`\`
+
+## 实用技巧
+
+1. 使用\`.gitignore\`忽略不需要跟踪的文件
+2. 定期执行\`git gc\`清理仓库
+3. 使用别名简化常用命令
+4. 学习交互式暂存(\`git add -p\`)
+
+记住：频繁提交，有意义的提交信息，及时推送！
+        `
     },
     {
         id: 4,
-        title: "测试1",
+        title: "测试文章",
         date: "2026-7-19",
-        category: "测试1.1",
-        excerpt: "测试1.2",
-        tags: ["测试1.3.1", "测试1.3.2", "测试1.3.3"],
-        content: "测试1.4:"
+        category: "测试",
+        excerpt: "这是一个测试文章的摘要...",
+        tags: ["测试", "示例"],
+        content: "这里是测试文章的完整内容。"
     },
     {
         id: 5,
         title: "论存在的碎片：一则关于虚无的注脚",
         date: "2026-7-19",
-        category: "文章",
+        category: "哲学",
         excerpt: "名言风暴席卷逻辑废墟，一场荒诞而华丽的思想拼贴盛宴。",
-        tags: ["可读性强", "逻辑性强", "名言广泛"],
-        content: "论存在的碎片：一则关于虚无的注脚\n\n亚里士多德曾言..."
+        tags: ["哲学", "随笔"],
+        content: `# 论存在的碎片：一则关于虚无的注脚
+
+论存在的碎片：一则关于虚无的注脚
+
+亚里士多德曾言：“存在之为存在，其意义究竟何在？”然而，正如尼采在《查拉图斯特拉如是说》中所咆哮的，“上帝死了”，那么存在的基石便也随之崩塌，如同特洛伊木马腹中藏匿的士兵，突然涌出，却发现城外空无一物。我吃了一个苹果，果皮是红的，这让我想起毕加索的蓝色时期，他说：“艺术是一个谎言，但它说真话。”可谁又能证明苹果的红色不是一种光谱的骗局？就像笛卡尔怀疑一切时，唯留下“我思故我在”，但叔本华立刻反驳：“意志是第一性的，理智只是其客体化。”那么，当我咀嚼苹果时，究竟是我在思考苹果，还是苹果的意志借由我的牙齿得以显现？维特根斯坦在《逻辑哲学论》结尾处叹息：“凡不可言说者，必保持沉默。”但此刻我却忍不住要谈论这苹果的沉默，它的沉默比任何雄辩都更接近老子的“大音希声”。
+
+黑格尔辩证法的正题、反题与合题，在此刻却陷入了僵局。正题是“苹果”，反题是“非苹果”，合题难道是“苹果的虚无”？萨特说：“存在先于本质。”那么这个苹果在被我吃掉之前，是否一直处于一种等待被定义的悬置状态？就像卡夫卡笔下的土地测量员K，永远徘徊在城堡的门口，既进不去，也离不开。加缪在《西西弗斯神话》里描绘的荒谬，此刻具象化为我手中的苹果核——推石上山，石落山下，周而复始，而苹果核的命运，不过是回归泥土，成为另一颗苹果的养分，这难道不是另一种形式的永恒轮回？尼采对此定会大笑：“万物方来，万物方去，存在之轮，永远循环。”
+
+月光洒在桌面上，像极了梵高《星月夜》里扭曲的笔触。他说：“我梦想着绘画，我画着我的梦想。”但月亮本身并不发光，它只是反射太阳的光辉，正如柏拉图洞穴里的囚徒，将影子误认为真实。培根在《新工具》中呼吁打破“四假象”，可当我们凝视月亮时，心中的“剧场假象”早已将这苍白的天体幻化为无数诗意的符号。苏轼曾叹：“明月几时有？把酒问青天。”而李白则醉曰：“举杯邀明月，对影成三人。”这些诗句如同康德的十二范畴，先验地规定了我们对月亮的感知，却也遮蔽了月亮本身的存在。海德格尔追问“技术的追问”，认为现代技术将世界视为“持存物”，那么月亮在今天，是否也沦为了NASA探测器传回的数据流？
+
+窗外的风声让我想起庄子所说的“天籁”，他说：“夫吹万不同，而使其自己也。”但风声过后，万籁俱寂，这寂静是否比声音更接近“道”？老子云：“道可道，非常道。”那么，试图用语言捕捉风的形态，本身就是一种徒劳，如同奥古斯丁在《忏悔录》中对时间的困惑：“那么时间究竟是什么？没人问我，我倒清楚，有人问我，我想说明，便茫然不解了。”柏格森的“绵延”或许能给出答案，他认为时间是质的变化，而非量的积累，就像这风，每一刻的吹拂都是独一无二的，无法被分割为过去、现在和未来。但爱因斯坦的相对论又告诉我们，时间与空间交织为时空连续体，那么风的速度，是否也在改变时间的流逝？这让我想起王尔德的妙语：“除了感官，什么都不能治愈灵魂的创痛。”或许，只有感受风的触感，才能暂时逃离这些哲学的迷宫。
+
+桌上的咖啡凉了，正如赫拉克利特所言：“人不能两次踏进同一条河流。”咖啡的温度在流逝，分子的运动在减缓，这杯咖啡已不再是刚才那杯咖啡。但巴门尼德坚持“存在是一”，变化只是幻觉，那么这杯凉掉的咖啡，本质上是否从未改变？马克思在《资本论》中指出，商品具有使用价值和交换价值，那么这杯咖啡的价值，是体现在它的提神功能，还是它在超市货架上的价格标签？凡勃伦在《有闲阶级论》中提到的“炫耀性消费”，让我不禁怀疑，我喝咖啡的行为，是否只是为了展示一种“有闲”的姿态？就像波德里亚在《消费社会》中批判的，我们消费的不再是物品本身，而是符号的意义。这杯咖啡，此刻已成为一个漂浮的能指，指向无数与我无关的所指。
+
+墙上的挂钟滴答作响，时间在其中被切割为均匀的片段。圣奥古斯丁说：“时间分为过去的现在、现在的现在和将来的现在。”但胡塞尔的现象学则强调“内时间意识”，认为时间的流逝是我们意识的构造。那么，挂钟的滴答声，是客观时间的显现，还是我主观意识的投射？牛顿的绝对时间观认为时间是“绝对的、真实的数学时间，就其自身及其本质而言，是均匀流动的，不因外界事物而有所改变”，但莱布尼茨却反驳说，时间是“现象的秩序”。康德试图调和二者，将时间视为感性直观的纯形式，但这仍然无法解释，为何当我专注于思考时，时间仿佛静止；而当无聊袭来，时间又变得异常漫长。普鲁斯特在《追忆似水年华》中，通过一块玛德琳蛋糕唤起了整个贡布雷的记忆，证明了时间可以被味觉重新编织，这或许是对线性时间最优雅的反叛。
+
+书架上的《论语》积满了灰尘，孔子曰：“学而时习之，不亦说乎？”但福柯在《规训与惩罚》中揭示，现代教育制度本质上是权力的规训手段，“学”的过程不过是塑造“驯顺的身体”。那么，孔子的“学”是否也是一种早期的社会控制？老子主张“绝圣弃智”，认为“智慧出，有大伪”，这与孔子的思想形成了鲜明的对比。庄子更是嘲笑儒家的仁义道德，说：“窃钩者诛，窃国者为诸侯。”这些先秦诸子的争论，在今天看来，仿佛是一场跨越千年的话语争夺战。哈贝马斯提出“交往行为理论”，希望通过理性沟通达成共识，但在一个价值多元的时代，共识是否只是一种奢望？就像罗尔斯的“重叠共识”，试图在不同宗教和哲学立场之间找到平衡点，但这平衡是否脆弱得如同风中残烛？
+
+手机屏幕突然亮起，一条推送消息弹出：“人工智能将取代人类工作。”图灵在《计算机与智能》中提出“图灵测试”，试图定义机器智能，但塞尔的“中文房间”思想实验却指出，即使机器能通过测试，也不代表它真正理解了意义。那么，未来的人工智能，是否会像笛卡尔笔下的“自动机”，看似拥有智能，实则只是执行预设的程序？霍金生前警告：“人工智能可能是人类文明史上最大的事件，也可能是一个。”马斯克则呼吁对人工智能进行监管，以免其失控。但这些担忧，是否只是人类中心主义的体现？如果有一天，人工智能产生了自我意识，它们是否会像尼采所说的“超人”一样，重估一切价值？那时，人类的“人性”又将何去何从？克尔凯郭尔在《恐惧与颤栗》中讨论的“信仰的飞跃”，或许可以类比人类对未知技术的态度——我们既依赖它，又恐惧它，在这种张力中摇摆不定。
+
+窗外的树影摇曳，让我想起梭罗在瓦尔登湖畔的观察：“我到林中去是因为我希望有意识地生活，只面对生活中最基本的事实。”但他同时也承认，自己需要偶尔回到镇上，与人交流。这说明，即使是隐士，也无法完全脱离社会。马克思说：“人是社会关系的总和。”那么，梭罗的独处，是否只是一种暂时的抽离，而非真正的孤立？卢梭在《论人类不平等的起源和基础》中描绘了自然状态下的“高贵的野蛮人”，但现代人类学的研究表明，原始社会并非如此和谐。这让我想起黑格尔的“主奴辩证法”，主人通过奴隶的劳动确证自己的存在，而奴隶则在劳动中获得自我意识。那么，在现代社会中，我们是否都是彼此的奴隶，通过相互依赖来维持脆弱的自我认同？弗洛伊德的精神分析则揭示了潜意识的力量，他认为人类的许多行为，都是潜意识欲望的伪装满足。那么，梭罗选择隐居，是否也是为了逃避某种潜意识中的焦虑？荣格的“集体潜意识”概念进一步指出，我们共享着祖先的记忆原型，比如“阴影”“阿尼玛”“阿尼姆斯”等。那么，树影的摇曳，是否唤醒了我心中某种原始的恐惧原型？
+
+茶杯底的茶渍形成了一个奇怪的图案，像极了哥德尔的不完备定理所揭示的数学系统的局限性——任何一个包含算术的形式系统，如果是一致的，那么它就是不完备的。这意味着，在任何公理系统中，总存在一些命题，既不能被证明，也不能被证伪。那么，宇宙本身是否也是一个不完备的系统？是否存在一些真理，永远超出了人类理性的把握？康德在《纯粹理性批判》中划分了现象界和物自体，认为我们只能认识现象，而无法认识物自体。这似乎与哥德尔的结论有着异曲同工之妙。但胡塞尔坚信，通过现象学还原，我们可以“回到事情本身”，直观事物的本质。这两种立场的对立，至今仍是哲学史上的未解之谜。或许，正如维特根斯坦所说：“哲学问题的答案，在问题消失后才会显现。”当我们停止追问茶渍图案的意义时，它的意义才会自行浮现。
+
+远处传来教堂的钟声，这让我想起韦伯在《新教伦理与资本主义精神》中的论述，他认为新教的“天职”观念促进了资本主义的发展。但后来，资本主义的“铁笼”却将人们困在无休止的工具理性之中。那么，教堂的钟声，在今天是否还能唤起人们对神圣性的向往？还是仅仅成为一种文化怀旧的符号？齐泽克在《意识形态的崇高客体》中指出，即使人们不相信宗教教义，也会遵循宗教仪式，因为仪式本身具有社会整合的功能。那么，这钟声，是否就是一种意识形态的“缝合点”，将破碎的现代生活暂时粘合在一起？巴迪欧在《存在与事件》中，将“事件”定义为打破原有秩序的断裂，那么，一次真正的宗教体验，能否成为这样的“事件”，改变一个人的生命轨迹？但更多时候，我们只是在钟声中麻木地继续日常的生活，就像加缪笔下的默尔索，对母亲的去世表现出令人费解的冷漠。
+
+阳光透过窗帘的缝隙射进来，形成一道道光束，其中漂浮着无数尘埃。这让我想起德谟克利特的原子论，他认为世界由不可分割的原子和虚空组成。但伊壁鸠鲁修改了这一理论，认为原子存在“偏斜运动”，从而打破了决定论的链条，为自由意志留下了空间。卢克莱修在《物性论》中诗意地描述了原子的舞蹈，这与现代物理学的量子力学有着惊人的相似之处——海森堡的不确定性原理表明，我们无法同时精确测量粒子的位置和动量，微观世界的因果律并非绝对。那么，这些尘埃的运动，是否也遵循着不确定性原理？它们的轨迹，是否从根本上就是不可预测的？这让我想起波普尔的“证伪主义”，他认为科学理论不能被证实，只能被证伪。那么，我们对尘埃运动的观察，是否也只是不断接近真理，却永远无法达到？
+
+冰箱的嗡嗡声突然变得清晰起来，这是一种典型的“背景噪音”，平时被我们忽略，一旦注意，便挥之不去。这让我想起梅洛-庞蒂的知觉现象学，他强调身体在知觉中的核心地位，认为我们是通过身体的感官与世界接触的。那么，这嗡嗡声，正是通过我的耳朵，进入我的意识，成为我当下存在的一部分。伯格森的“感觉材料”概念也与此相关，他认为我们的感官接收到的只是零散的感觉材料，大脑将这些材料组织成有意义的对象。那么，冰箱的嗡嗡声，作为一种感觉材料，是如何被我的大脑识别为“冰箱的声音”的？这涉及到格式塔心理学的“完形”理论，即人类倾向于将零散的元素组织成一个整体。但维特根斯坦的“家族相似性”概念又提醒我们，所谓的“整体”并没有共同的本质，只是成员之间存在着相似的属性。那么，“冰箱的声音”这个类别，是否也只是基于家族相似性的建构？
+
+一本翻开的书的页码停在“语言的牢笼”这一章，萨丕尔-沃尔夫假说认为，语言的结构决定了思维的方式。那么，我此刻使用的汉语，是否限制了我对世界的认知？比如，汉语中没有严格的时态变化，这是否意味着中国人的时间观念与西方人不同？列维-斯特劳斯的结构主义人类学则强调，不同文化的背后存在着普遍的结构，比如二元对立。那么，汉语的阴阳概念，是否就是一种典型的结构主义体现？但德里达的解构主义则反对这种固定的结构，他认为文本的意义是无限延异的，不存在终极的所指。那么，这本书中关于“语言的牢笼”的论述，本身是否也陷入了自己所批判的“牢笼”之中？正如福柯在《词与物》的结尾处所描述的“人之死”——作为启蒙运动以来知识建构的“人”的概念，终将被消解。
+
+一只蜘蛛在墙角结网，这让我想起拉康的“镜像阶段”理论，婴儿在镜像中认出自己，从而形成“自我”的概念。但蜘蛛结网，是否也是一种“镜像”行为——它通过自己的分泌物，构建出一个与自己身体结构相似的网状物？或者，这只是拟人化的想象？达尔文的自然选择理论认为，蜘蛛结网是为了捕食，这是一种适应环境的进化结果。但克里克在《惊人的假说》中，将意识还原为神经元的活动，那么，蜘蛛结网的“目的性”，是否也只是神经元放电的产物？这让我想起柏格森的“生命冲动”，他认为生命的进化是一种创造性的过程，而非机械的选择。那么，蜘蛛的网，是否就是生命冲动的一种具体表现？但现代生物学更倾向于用基因和自然选择来解释，这两种解释的张力，至今仍未消解。
+
+水杯里的水面平静如镜，倒映着天花板上的吊灯。这让我想起柏拉图的“洞穴寓言”，如果我们被困在洞穴里，只能看到事物投在墙壁上的影子，那么我们自然会认为影子就是真实。那么，水面上的倒影，是否也是一种“影子”？我们如何通过这影子，认识真实的世界？洛克的经验论认为，所有的知识都来源于经验，心灵最初是一块“白板”，经验在上面写下印记。那么，我对倒影的认识，就是视觉经验的结果。但莱布尼茨反驳说，心灵不是白板，而是有“天赋观念”的，比如逻辑和数学知识。那么，我之所以能将倒影识别为“吊灯的影像”，是否也依赖于某种天赋的观念？康德试图综合二者，认为知识是经验材料和先天范畴的结合。那么，倒影之所以成为“倒影”，正是因为我的知性范畴对其进行了整理。但休谟的怀疑论则提醒我们，我们无法证明因果关系必然存在，我们看到的只是事件的恒常联结。那么，我凭什么相信，吊灯是倒影的原因，而不是相反？
+
+空气中的湿度让人感到黏腻，这让我想起亚里士多德的“四因说”，质料因、形式因、动力因和目的因。那么，空气的湿度，其质料因是水分子，形式因是其气态分布，动力因是蒸发作用，目的因是什么？亚里士多德的目的论认为，万物都有其自然的目的，比如种子的目的是长成植物。但现代科学摒弃了目的论，认为自然现象可以用物理和化学规律来解释。那么，湿度的存在，是否只是一种物理过程的副产品，并无所谓“目的”？但德日进在《人的现象》中，提出了“欧米伽点”的概念，认为宇宙进化的终极指向是意识的汇聚。那么，湿度的变化，是否在某种程度上，参与了这个宏大的进化过程？这似乎又回到了目的论的立场。或许，正如怀特海的“过程哲学”所主张的，世界本质上是一个动态的过程，每一个事件都是这个过程中的一个瞬间，湿度也不例外。
+
+笔尖在纸上划过的沙沙声，与窗外的蝉鸣交织在一起。这让我想起巴赫金的“复调”理论，他认为陀思妥耶夫斯基的小说中，不同人物的声音平等对话，没有一个统一的权威声音。那么，此刻我听到的多种声音，是否也构成了一首“复调”的音乐？但阿多诺在《美学理论》中批评这种“同一性思维”，认为它将差异纳入统一的框架。那么，我将这些声音并置在一起，是否也是一种“同一性思维”的体现？或者，正如罗兰·巴特在《文本的愉悦》中所说，读者在阅读过程中，可以与文本产生“互文性”的对话，创造出新的意义。那么，我此刻的写作，就是在创造一个文本，而读者的阅读，将是另一个创造过程。但这种创造，是否也受到语言本身的局限？正如老子所说：“道可道，非常道；名可名，非常名。”任何试图用语言表达的尝试，都注定是不完整的。
+
+桌角的橡皮擦缺了一角，这让我想起赫拉克利特的“万物皆流”，一切都在变化之中，没有什么是永恒不变的。但巴门尼德坚持“存在是一”，变化是虚幻的。那么，这块橡皮擦的残缺，是真实的变化，还是我的错觉？芝诺的悖论则进一步挑战我们对运动和变化的直觉，比如“阿基里斯追不上乌龟”，虽然现实中阿基里斯显然能追上乌龟，但芝诺的逻辑推理却似乎无懈可击。那么，我们该如何理解变化？是相信感官经验，还是相信逻辑推理？康德试图调和二者的矛盾，认为现象是变化的，但物自体是不变的。但这仍然无法解决芝诺悖论带来的困惑。或许，正如维特根斯坦所说，哲学问题产生于“语言休假”的时候，当我们试图用语言去描述那些超出其正常用法范围的事物时，就会产生悖论。那么，芝诺悖论，是否就是语言误用的结果？
+
+墙上的一幅画，画的是一片抽象的色彩。这让我想起康定斯基的《论艺术中的精神》，他认为艺术应该表达内在的精神，而非模仿外在的现实。色彩本身就具有情感的力量，比如蓝色是宁静，红色是激情。但蒙德里安则追求纯粹的几何抽象，认为艺术应该超越个体的情感，达到一种普遍的和谐。这两种艺术理念的对立，反映了现代艺术的多元化。但丹托在《艺术的终结》中提出，当艺术发展到一定程度，就不再有统一的叙事，任何东西都可以成为艺术。那么，这幅抽象画，是否就是“艺术的终结”的一个例证？或者，正如贝尔廷在《艺术史的终结？》中所说，艺术史并没有终结，只是进入了“后历史”阶段，多种叙事并存。那么，这幅画的“意义”，就取决于观众的阐释，而非作品本身。这让我想起伽达默尔的“视域融合”理论，认为理解是解释者的视域与文本的视域相互融合的过程。那么，我对这幅画的理解，就是我的视域与画家的视域（如果我了解画家的话）融合的结果。
+
+一阵微风吹过，书页轻轻翻动，露出了下面的文字：“我思故我在。”笛卡尔的这句名言，曾被视为现代哲学的基石。但尼采嘲讽说，这不过是“我思”这个语法结构的产物，仿佛有一个“我”在“思”。拉康则进一步指出，“我”是一个虚构的统一体，是语言的建构。那么，“我思故我在”中的“我”，究竟是谁？是那个正在写作的我，还是那个被语言建构的“主体”？萨特说：“他人即地狱。”因为他人的目光会将我客体化，剥夺我的主体性。那么，当我审视自己时，是否也在将自己客体化？这让我想起梅洛-庞蒂的“身体主体”概念，他认为主体不是纯粹的意识，而是 embodied 的主体，通过身体与世界互动。那么，“我思”的背后，其实是一个“我能”——我能感知，我能行动，我能思考。但这种“我能”，是否也受到了社会和历史条件的制约？正如福柯在《规训与惩罚》中所揭示的，权力通过各种微观技术，塑造着我们的身体和行为。那么，我的“我能”，是否也只是权力运作的结果？
+
+时钟的指针指向了午夜，一天即将结束。这让我想起诺瓦利斯的“浪漫主义反讽”，认为世界本质上是矛盾的，我们应该以一种反讽的态度对待它。那么，我对这一天的思考，是否也应该带着一丝反讽？因为我所思考的一切，都可能是虚幻的，就像庄周梦蝶，不知周之梦为蝴蝶与，蝴蝶之梦为周与？但黑格尔的辩证法告诉我们，矛盾是推动事物发展的动力，没有矛盾，就没有进步。那么，这种反讽的态度，是否也是一种辩证的环节？或者，正如克尔凯郭尔在《非此即彼》中所说，人生充满了非此即彼的选择，我们无法回避。那么，我选择以反讽的态度结束这一天，是否也是一种选择？但这选择本身，是否也受到了我之前所有思考的影响？这是一个无限递归的问题，没有终点。或许，正如维特根斯坦在《逻辑哲学论》的最后所说：“对于不可言说之物，必须保持沉默。”那么，关于这一天的思考，也该到此为止了。但沉默之后，又会是什么呢？是新的思考，还是彻底的虚无？这让我想起老子的一句话：“天下万物生于有，有生于无。”那么，这沉默，或许就是新的“有”的起点。但谁又能说得清呢？`
     }
 ];
 
@@ -57,34 +320,6 @@ const postDetail = document.getElementById('postDetail');
 const postContent = document.getElementById('postContent');
 const backBtn = document.getElementById('backBtn');
 const themeToggle = document.getElementById('themeToggle');
-const sprayIndicator = document.getElementById('sprayIndicator');
-const kangarooCountEl = document.getElementById('kangarooCount');
-
-// 控制面板元素
-const gravitySlider = document.getElementById('gravitySlider');
-const frequencySlider = document.getElementById('frequencySlider');
-const powerSlider = document.getElementById('powerSlider');
-const trailToggle = document.getElementById('trailToggle');
-const cleanupToggle = document.getElementById('cleanupToggle');
-const gravityValue = document.getElementById('gravityValue');
-const frequencyValue = document.getElementById('frequencyValue');
-const powerValue = document.getElementById('powerValue');
-
-// =======================
-// 袋鼠物理引擎参数
-// =======================
-const KANGAROO_EMOJIS = ['🦘', '🦘', '🦘', '💨', '✨'];
-let GRAVITY = 900;
-let LAUNCH_INTERVAL = 50;
-let INITIAL_SPEED_MIN = 300;
-let INITIAL_SPEED_MAX = 600;
-let SHOW_TRAIL = false;
-let AUTO_CLEANUP = true;
-
-let kangarooSpawnTimer = null;
-let activeKangaroos = [];
-let mouseX = 0;
-let mouseY = 0;
 
 // =======================
 // 初始化
@@ -94,7 +329,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     initializeTheme();
     hljs.highlightAll();
-    setupControlPanel();
 });
 
 // =======================
@@ -116,7 +350,9 @@ function renderPosts() {
                     <span><i class="fas fa-tag"></i> ${post.category}</span>
                 </div>
             </div>
-            <div class="post-excerpt">${post.excerpt}</div>
+            <div class="post-excerpt">
+                ${post.excerpt}
+            </div>
             <div class="post-tags">
                 ${post.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
             </div>
@@ -127,10 +363,10 @@ function renderPosts() {
 }
 
 // =======================
-// 事件监听
+// 事件监听器
 // =======================
 function setupEventListeners() {
-    // 文章点击
+    // 文章点击事件
     postsContainer.addEventListener('click', function(e) {
         const postCard = e.target.closest('.post-card');
         if (postCard) {
@@ -145,189 +381,153 @@ function setupEventListeners() {
     // 主题切换
     themeToggle.addEventListener('click', toggleTheme);
     
-    // 平滑滚动
+    // 平滑滚动导航
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         });
     });
     
     // =======================
-    // 袋鼠喷射核心事件
+    // 袋鼠点击特效（核心逻辑）
     // =======================
-    document.addEventListener('mousedown', e => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
+    document.addEventListener('click', function(e) {
+        // 排除特定元素的点击（避免干扰原有功能）
+        const excludedElements = ['a', 'button', '.post-card', '.theme-toggle', '.back-btn'];
+        let isExcluded = false;
         
-        sprayIndicator.style.left = `${mouseX}px`;
-        sprayIndicator.style.top = `${mouseY}px`;
-        sprayIndicator.classList.add('active');
-        
-        spawnKangaroo(mouseX, mouseY);
-        
-        kangarooSpawnTimer = setInterval(() => {
-            spawnKangaroo(mouseX, mouseY);
-        }, LAUNCH_INTERVAL);
-    });
-    
-    document.addEventListener('mousemove', e => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        
-        if (kangarooSpawnTimer) {
-            sprayIndicator.style.left = `${mouseX}px`;
-            sprayIndicator.style.top = `${mouseY}px`;
-        }
-    });
-    
-    document.addEventListener('mouseup', stopSpraying);
-    document.addEventListener('mouseleave', stopSpraying);
-}
-
-function stopSpraying() {
-    clearInterval(kangarooSpawnTimer);
-    kangarooSpawnTimer = null;
-    sprayIndicator.classList.remove('active');
-}
-
-// =======================
-// 控制面板逻辑
-// =======================
-function setupControlPanel() {
-    gravitySlider.addEventListener('input', e => {
-        GRAVITY = parseInt(e.target.value);
-        gravityValue.textContent = GRAVITY;
-    });
-    
-    frequencySlider.addEventListener('input', e => {
-        LAUNCH_INTERVAL = parseInt(e.target.value);
-        frequencyValue.textContent = LAUNCH_INTERVAL;
-    });
-    
-    powerSlider.addEventListener('input', e => {
-        const power = parseInt(e.target.value);
-        INITIAL_SPEED_MIN = power * 0.7;
-        INITIAL_SPEED_MAX = power * 1.3;
-        powerValue.textContent = power;
-    });
-    
-    trailToggle.addEventListener('click', () => {
-        trailToggle.classList.toggle('active');
-        SHOW_TRAIL = trailToggle.classList.contains('active');
-    });
-    
-    cleanupToggle.addEventListener('click', () => {
-        cleanupToggle.classList.toggle('active');
-        AUTO_CLEANUP = cleanupToggle.classList.contains('active');
-    });
-}
-
-// =======================
-// 袋鼠物理系统
-// =======================
-function spawnKangaroo(x, y) {
-    const el = document.createElement('div');
-    el.className = 'kangaroo';
-    if (SHOW_TRAIL) el.classList.add('has-trail');
-    el.textContent = KANGAROO_EMOJIS[Math.floor(Math.random() * KANGAROO_EMOJIS.length)];
-    
-    const angle = (Math.random() - 0.5) * Math.PI / 1.5;
-    const speed = INITIAL_SPEED_MIN + Math.random() * (INITIAL_SPEED_MAX - INITIAL_SPEED_MIN);
-    
-    const vx = Math.sin(angle) * speed;
-    const vy = -Math.cos(angle) * speed;
-    
-    el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
-    
-    document.body.appendChild(el);
-    
-    activeKangaroos.push({
-        el,
-        x,
-        y,
-        vx,
-        vy,
-        startTime: performance.now(),
-        rotation: Math.random() * 360
-    });
-    
-    updateKangarooCounter();
-}
-
-function updateKangaroos(now) {
-    for (let i = activeKangaroos.length - 1; i >= 0; i--) {
-        const k = activeKangaroos[i];
-        const dt = (now - k.startTime) / 1000;
-        
-        k.x += k.vx * dt;
-        k.y += k.vy * dt + 0.5 * GRAVITY * dt * dt;
-        k.vy += GRAVITY * dt;
-        k.rotation += k.vx * 0.3;
-        
-        k.el.style.transform = `translate(${k.x - mouseX}px, ${k.y - mouseY}px) rotate(${k.rotation}deg)`;
-        
-        if (AUTO_CLEANUP && (k.y > window.innerHeight + 100 || now - k.startTime > 2000)) {
-            k.el.classList.add('fade-out');
-            setTimeout(() => k.el.remove(), 600);
-            activeKangaroos.splice(i, 1);
-            updateKangarooCounter();
+        for (const selector of excludedElements) {
+            if (e.target.matches(selector) || e.target.closest(selector)) {
+                isExcluded = true;
+                break;
+            }
         }
         
-        k.startTime = now;
+        // 如果不是排除元素，则创建袋鼠特效
+        if (!isExcluded) {
+            spawnKangaroos(e.clientX, e.clientY);
+        }
+    });
+}
+
+// =======================
+// 袋鼠生成函数
+// =======================
+function spawnKangaroos(x, y) {
+    const kangarooCount = Math.floor(Math.random() * 3) + 3; // 3-5只袋鼠
+    const kangarooEmojis = ['🦘', '🦘', '🦘', '💨', '✨']; // 袋鼠和特效emoji
+    
+    for (let i = 0; i < kangarooCount; i++) {
+        const kangaroo = document.createElement('div');
+        kangaroo.className = 'kangaroo';
+        kangaroo.textContent = kangarooEmojis[Math.floor(Math.random() * kangarooEmojis.length)];
+        
+        // 向外飞的参数
+        const angle = Math.random() * Math.PI * 2; // 随机角度（全圆）
+        const distance = 40 + Math.random() * 50; // 飞行距离
+        const flyX = Math.cos(angle) * distance;
+        const flyY = Math.sin(angle) * distance;
+        
+        // 旋转参数
+        const spin = (Math.random() - 0.5) * 120; // 初始旋转
+        const spinEnd = spin + (Math.random() - 0.5) * 150; // 结束旋转
+        const drift = (Math.random() - 0.5) * 30; // 横向漂移
+        
+        // 设置CSS变量
+        kangaroo.style.left = `${x}px`;
+        kangaroo.style.top = `${y}px`;
+        kangaroo.style.setProperty('--fly-x', `${flyX}px`);
+        kangaroo.style.setProperty('--fly-y', `${flyY}px`);
+        kangaroo.style.setProperty('--spin', `${spin}deg`);
+        kangaroo.style.setProperty('--spin-end', `${spinEnd}deg`);
+        kangaroo.style.setProperty('--drift', `${drift}px`);
+        
+        // 添加到页面
+        document.body.appendChild(kangaroo);
+        
+        // 第一阶段：向外飞
+        requestAnimationFrame(() => {
+            kangaroo.classList.add('fly-out');
+        });
+        
+        // 第二阶段：向下掉
+        setTimeout(() => {
+            kangaroo.classList.remove('fly-out');
+            kangaroo.classList.add('fall-down');
+            
+            // 动画结束后移除元素
+            setTimeout(() => {
+                kangaroo.remove();
+            }, 650);
+        }, 350); // 第一阶段动画时长
     }
 }
 
-function updateKangarooCounter() {
-    kangarooCountEl.textContent = activeKangaroos.length;
-}
-
-// 启动物理循环
-requestAnimationFrame(function animate(now) {
-    updateKangaroos(now);
-    requestAnimationFrame(animate);
-});
-
 // =======================
-// 博客业务逻辑
+// 显示文章详情
 // =======================
 function showPostDetail(id) {
     const post = posts.find(p => p.id === id);
     if (!post) return;
     
+    // 使用marked解析Markdown
     postContent.innerHTML = marked.parse(post.content);
+    
+    // 高亮代码块
     postContent.querySelectorAll('pre code').forEach(block => {
         hljs.highlightElement(block);
     });
     
+    // 显示详情，隐藏列表
     document.getElementById('posts').classList.add('hidden');
     postDetail.classList.remove('hidden');
+    
+    // 滚动到顶部
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// =======================
+// 隐藏文章详情
+// =======================
 function hidePostDetail() {
     postDetail.classList.add('hidden');
     document.getElementById('posts').classList.remove('hidden');
 }
 
+// =======================
+// 主题切换
+// =======================
 function toggleTheme() {
     const body = document.body;
     const icon = themeToggle.querySelector('i');
     
     body.classList.toggle('dark-theme');
-    icon.className = body.classList.contains('dark-theme') ? 'fas fa-sun' : 'fas fa-moon';
-    localStorage.setItem('theme', body.classList.contains('dark-theme') ? 'dark' : 'light');
+    
+    if (body.classList.contains('dark-theme')) {
+        icon.className = 'fas fa-sun';
+        localStorage.setItem('theme', 'dark');
+    } else {
+        icon.className = 'fas fa-moon';
+        localStorage.setItem('theme', 'light');
+    }
 }
 
+// =======================
+// 初始化主题
+// =======================
 function initializeTheme() {
     const savedTheme = localStorage.getItem('theme');
     const icon = themeToggle.querySelector('i');
     
-    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    if (savedTheme === 'dark' || 
+        (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.body.classList.add('dark-theme');
         icon.className = 'fas fa-sun';
     } else {

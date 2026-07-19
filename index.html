@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xiaowenxu-qwq`s Blog</title>
+    <title>xiaowenxu-qwq的博客</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,11 +34,11 @@
             <p>记录开发心得，分享技术见解</p>
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number">12</span>
+                    <span class="stat-number">5</span>
                     <span class="stat-label">篇文章</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">3</span>
+                    <span class="stat-number">4</span>
                     <span class="stat-label">分类</span>
                 </div>
                 <div class="stat-item">
@@ -50,14 +50,18 @@
 
         <section id="posts" class="posts-section">
             <h2><i class="fas fa-list-alt"></i> 最新文章</h2>
-            <div class="posts-grid" id="postsContainer"></div>
+            <div class="posts-grid" id="postsContainer">
+                <!-- 文章将通过JavaScript动态渲染 -->
+            </div>
         </section>
 
         <section id="postDetail" class="post-detail hidden">
             <button class="back-btn" id="backBtn">
                 <i class="fas fa-arrow-left"></i> 返回列表
             </button>
-            <div class="post-content" id="postContent"></div>
+            <div class="post-content" id="postContent">
+                <!-- 文章详情将通过JavaScript动态渲染 -->
+            </div>
         </section>
 
         <section id="about" class="about-section">
@@ -69,9 +73,9 @@
                     <li><i class="fas fa-check"></i> 代码高亮显示</li>
                     <li><i class="fas fa-check"></i> 深色/浅色主题切换</li>
                     <li><i class="fas fa-check"></i> 响应式设计</li>
-                    <li><i class="fas fa-check"></i> 重力抛物线袋鼠喷射系统</li>
+                    <li><i class="fas fa-check"></i> 迷你袋鼠点击特效 🦘</li>
                 </ul>
-                <p><strong>提示：</strong>在页面任意位置按住鼠标不放，可以喷射袋鼠！</p>
+                <p><strong>提示：</strong>点击页面任意空白处，会有可爱的小袋鼠跳出来哦！</p>
             </div>
         </section>
     </main>
@@ -84,58 +88,6 @@
             <a href="#"><i class="fas fa-rss"></i></a>
         </div>
     </footer>
-
-    <!-- 袋鼠喷射指示器 -->
-    <div class="spray-indicator" id="sprayIndicator"></div>
-    
-    <!-- 袋鼠计数器 -->
-    <div class="kangaroo-counter" id="kangarooCounter">
-        活跃袋鼠: <span id="kangarooCount">0</span>
-    </div>
-
-    <!-- 控制面板 -->
-    <div class="control-panel">
-        <h3><i class="fas fa-sliders-h"></i> 袋鼠喷射控制</h3>
-        
-        <div class="control-group">
-            <label>重力强度</label>
-            <div class="slider-container">
-                <input type="range" id="gravitySlider" min="100" max="2000" value="900" step="50">
-                <span class="slider-value" id="gravityValue">900</span>
-            </div>
-        </div>
-        
-        <div class="control-group">
-            <label>喷射频率</label>
-            <div class="slider-container">
-                <input type="range" id="frequencySlider" min="10" max="200" value="50" step="5">
-                <span class="slider-value" id="frequencyValue">50</span>
-            </div>
-        </div>
-        
-        <div class="control-group">
-            <label>喷射力度</label>
-            <div class="slider-container">
-                <input type="range" id="powerSlider" min="100" max="800" value="450" step="50">
-                <span class="slider-value" id="powerValue">450</span>
-            </div>
-        </div>
-        
-        <div class="toggle-control">
-            <span>袋鼠轨迹</span>
-            <div class="toggle-switch" id="trailToggle"></div>
-        </div>
-        
-        <div class="toggle-control">
-            <span>自动清理</span>
-            <div class="toggle-switch active" id="cleanupToggle"></div>
-        </div>
-        
-        <div class="instructions">
-            <i class="fas fa-mouse-pointer"></i> 按住鼠标左键喷射袋鼠<br>
-            <i class="fas fa-sliders-h"></i> 使用滑块调整参数
-        </div>
-    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
