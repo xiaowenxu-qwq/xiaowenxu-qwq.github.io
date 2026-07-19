@@ -357,7 +357,7 @@ body {
 }
 
 /* =======================
-   袋鼠动画样式（核心）
+   袋鼠动画样式（四散版）
    ======================= */
 .kangaroo {
     position: fixed;
@@ -368,36 +368,19 @@ body {
     will-change: transform, opacity;
 }
 
-/* 第一阶段：向外飞 */
-.kangaroo.fly-out {
-    animation: flyOut 0.35s ease-out forwards;
+/* 四散飞出动画 */
+.kangaroo.scatter {
+    animation: scatterOut 0.8s cubic-bezier(0.215, 0.610, 0.355, 1) forwards;
 }
 
-/* 第二阶段：向下掉 */
-.kangaroo.fall-down {
-    animation: fallDown 0.65s ease-in forwards;
-}
-
-/* 向外飞出的关键帧 */
-@keyframes flyOut {
+/* 四散关键帧 - 向外扩散并消失 */
+@keyframes scatterOut {
     0% {
         transform: translate(0, 0) rotate(0deg) scale(1);
         opacity: 1;
     }
     100% {
-        transform: translate(var(--fly-x), var(--fly-y)) rotate(var(--spin));
-        opacity: 0.9;
-    }
-}
-
-/* 向下掉落的关键帧 */
-@keyframes fallDown {
-    0% {
-        transform: translate(var(--fly-x), var(--fly-y)) rotate(var(--spin)) scale(1);
-        opacity: 0.9;
-    }
-    100% {
-        transform: translate(calc(var(--fly-x) + var(--drift)), calc(var(--fly-y) + 110px)) rotate(var(--spin-end)) scale(0.2);
+        transform: translate(var(--scatter-x), var(--scatter-y)) rotate(var(--spin-deg)) scale(0);
         opacity: 0;
     }
 }

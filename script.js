@@ -261,7 +261,7 @@ git diff --staged
         date: "2026-7-19",
         category: "哲学",
         excerpt: "名言风暴席卷逻辑废墟，一场荒诞而华丽的思想拼贴盛宴。",
-        tags: ["哲学", "随笔"],
+        tags: ["哲学", "严谨","科学"],
         content: `# 论存在的碎片：一则关于虚无的注脚
 
 论存在的碎片：一则关于虚无的注脚
@@ -396,77 +396,64 @@ function setupEventListeners() {
     });
     
     // =======================
-    // 袋鼠点击特效（核心逻辑）
+    // 袋鼠点击特效（全屏响应）
     // =======================
     document.addEventListener('click', function(e) {
-        // 排除特定元素的点击（避免干扰原有功能）
-        const excludedElements = ['a', 'button', '.post-card', '.theme-toggle', '.back-btn'];
-        let isExcluded = false;
-        
+        // 现在点击任意地方都会触发，包括按钮、链接等
+        // 如果你想排除某些元素，可以取消下面的注释
+        /*
+        const excludedElements = ['.post-card', '.back-btn'];
         for (const selector of excludedElements) {
-            if (e.target.matches(selector) || e.target.closest(selector)) {
-                isExcluded = true;
-                break;
+            if (e.target.closest(selector)) {
+                return; // 如果在排除元素内，不触发特效
             }
         }
+        */
         
-        // 如果不是排除元素，则创建袋鼠特效
-        if (!isExcluded) {
-            spawnKangaroos(e.clientX, e.clientY);
-        }
+        spawnKangaroos(e.clientX, e.clientY);
     });
 }
 
 // =======================
-// 袋鼠生成函数
+// 袋鼠生成函数（四散版）
 // =======================
 function spawnKangaroos(x, y) {
-    const kangarooCount = Math.floor(Math.random() * 3) + 3; // 3-5只袋鼠
-    const kangarooEmojis = ['🦘', '🦘', '🦘', '💨', '✨']; // 袋鼠和特效emoji
+    const kangarooCount = Math.floor(Math.random() * 4) + 4; // 4-7只袋鼠
+    const kangarooEmojis = ['🦘', '🦘', '🦘', '🦘', '💨', '✨', '🌟']; // 更多样化的表情
     
     for (let i = 0; i < kangarooCount; i++) {
         const kangaroo = document.createElement('div');
         kangaroo.className = 'kangaroo';
         kangaroo.textContent = kangarooEmojis[Math.floor(Math.random() * kangarooEmojis.length)];
         
-        // 向外飞的参数
-        const angle = Math.random() * Math.PI * 2; // 随机角度（全圆）
-        const distance = 40 + Math.random() * 50; // 飞行距离
-        const flyX = Math.cos(angle) * distance;
-        const flyY = Math.sin(angle) * distance;
+        // 四散参数 - 向四周随机方向扩散
+        const angle = Math.random() * Math.PI * 2; // 0到360度全方向
+        const distance = 80 + Math.random() * 120; // 扩散距离 80-200px
+        const scatterX = Math.cos(angle) * distance;
+        const scatterY = Math.sin(angle) * distance;
         
-        // 旋转参数
-        const spin = (Math.random() - 0.5) * 120; // 初始旋转
-        const spinEnd = spin + (Math.random() - 0.5) * 150; // 结束旋转
-        const drift = (Math.random() - 0.5) * 30; // 横向漂移
+        // 旋转参数 - 随机旋转
+        const spinDeg = (Math.random() - 0.5) * 720; // -360到360度旋转
         
         // 设置CSS变量
         kangaroo.style.left = `${x}px`;
         kangaroo.style.top = `${y}px`;
-        kangaroo.style.setProperty('--fly-x', `${flyX}px`);
-        kangaroo.style.setProperty('--fly-y', `${flyY}px`);
-        kangaroo.style.setProperty('--spin', `${spin}deg`);
-        kangaroo.style.setProperty('--spin-end', `${spinEnd}deg`);
-        kangaroo.style.setProperty('--drift', `${drift}px`);
+        kangaroo.style.setProperty('--scatter-x', `${scatterX}px`);
+        kangaroo.style.setProperty('--scatter-y', `${scatterY}px`);
+        kangaroo.style.setProperty('--spin-deg', `${spinDeg}deg`);
         
         // 添加到页面
         document.body.appendChild(kangaroo);
         
-        // 第一阶段：向外飞
+        // 触发四散动画
         requestAnimationFrame(() => {
-            kangaroo.classList.add('fly-out');
+            kangaroo.classList.add('scatter');
         });
         
-        // 第二阶段：向下掉
+        // 动画结束后移除元素
         setTimeout(() => {
-            kangaroo.classList.remove('fly-out');
-            kangaroo.classList.add('fall-down');
-            
-            // 动画结束后移除元素
-            setTimeout(() => {
-                kangaroo.remove();
-            }, 650);
-        }, 350); // 第一阶段动画时长
+            kangaroo.remove();
+        }, 800); // 动画持续时间
     }
 }
 
