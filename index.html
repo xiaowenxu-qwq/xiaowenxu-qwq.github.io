@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的技术博客</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="logo">
+                <i class="fas fa-blog"></i>
+                <span>CodeBlog</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home"><i class="fas fa-home"></i> 首页</a></li>
+                <li><a href="#posts"><i class="fas fa-list"></i> 文章</a></li>
+                <li><a href="#about"><i class="fas fa-user"></i> 关于</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section id="home" class="hero">
+            <h1>探索代码的无限可能</h1>
+            <p>记录开发心得，分享技术见解</p>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">12</span>
+                    <span class="stat-label">篇文章</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">分类</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">2024</span>
+                    <span class="stat-label">创建年份</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="posts" class="posts-section">
+            <h2><i class="fas fa-list-alt"></i> 最新文章</h2>
+            <div class="posts-grid" id="postsContainer">
+                <!-- 文章将通过JavaScript动态渲染 -->
+            </div>
+        </section>
+
+        <section id="post-detail" class="post-detail hidden" id="postDetail">
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i> 返回列表
+            </button>
+            <div class="post-content" id="postContent">
+                <!-- 文章详情将通过JavaScript动态渲染 -->
+            </div>
+        </section>
+
+        <section id="about" class="about-section">
+            <h2><i class="fas fa-info-circle"></i> 关于博客</h2>
+            <div class="about-content">
+                <p>这是一个使用纯HTML/CSS/JavaScript构建的静态博客，支持：</p>
+                <ul>
+                    <li><i class="fas fa-check"></i> Markdown风格的文章渲染</li>
+                    <li><i class="fas fa-check"></i> 代码高亮显示</li>
+                    <li><i class="fas fa-check"></i> 深色/浅色主题切换</li>
+                    <li><i class="fas fa-check"></i> 响应式设计</li>
+                    <li><i class="fas fa-check"></i> 一键部署到GitHub Pages</li>
+                </ul>
+                <p>所有文章数据存储在JavaScript对象中，无需后端服务器。</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 CodeBlog | 使用HTML/CSS/JS构建</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-github"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fas fa-rss"></i></a>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
