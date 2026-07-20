@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xiaowenxu-qwqのBlog</title>
+    <title>个人空间 - ciaowenxu-qwqのBlog</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
@@ -12,13 +12,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
-    <!-- 左侧边栏（已移除个人空间入口） -->
+    <!-- 左侧边栏（和主站一致，无个人空间入口） -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-content">
             <nav class="sidebar-nav">
                 <ul>
                     <li>
-                        <a href="index.html#home" class="sidebar-link active">
+                        <a href="index.html#home" class="sidebar-link">
                             <i class="fas fa-home"></i>
                             <span>主页</span>
                         </a>
@@ -48,15 +48,15 @@
         <nav class="navbar">
             <div class="logo">
                 <i class="fas fa-blog"></i>
-                <span>xiaowenxu-qwqのBlog</span>
+                <span>ciaowenxu-qwqのBlog</span>
             </div>
             
             <div class="navbar-right">
                 <button class="theme-toggle" id="themeToggle">
                     <i class="fas fa-moon"></i>
                 </button>
-                <!-- 头像跳转至独立个人中心 -->
-                <a href="profile.html" class="header-avatar" id="profileLink">
+                <!-- 个人中心内头像点击返回主站 -->
+                <a href="index.html" class="header-avatar" id="profileLink" title="返回主页">
                     <img src="assets/avatar.jpg" alt="头像" class="avatar-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\'fas fa-user\'></i>'">
                 </a>
             </div>
@@ -64,57 +64,47 @@
     </header>
 
     <main class="container">
-        <section id="home" class="hero">
-            <h1>探索代码的无限可能</h1>
-            <p>记录开发心得，分享技术见解</p>
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-number">5</span>
-                    <span class="stat-label">篇文章</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">4</span>
-                    <span class="stat-label">分类</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">2026</span>
-                    <span class="stat-label">创建年份</span>
-                </div>
+        <!-- 独立个人空间内容 -->
+        <section id="profile" class="profile-section">
+            <div class="profile-header">
+                <h2><i class="fas fa-user-circle"></i> 个人空间</h2>
+                <a href="index.html" class="back-to-home">
+                    <i class="fas fa-arrow-left"></i> 返回主页
+                </a>
             </div>
-        </section>
-
-        <!-- 原个人空间区块已移除 -->
-        <section id="posts" class="posts-section">
-            <h2><i class="fas fa-list-alt"></i> 最新文章</h2>
-            <div class="posts-grid" id="postsContainer"></div>
-        </section>
-
-        <section id="postDetail" class="post-detail hidden">
-            <button class="back-btn" id="backBtn">
-                <i class="fas fa-arrow-left"></i> 返回列表
-            </button>
-            <div class="post-content" id="postContent"></div>
-        </section>
-
-        <section id="about" class="about-section">
-            <h2><i class="fas fa-info-circle"></i> 关于博客</h2>
-            <div class="about-content">
-                <p>这是一个使用纯HTML/CSS/JavaScript构建的静态博客，支持：</p>
-                <ul>
-                    <li><i class="fas fa-check"></i> Markdown风格的文章渲染</li>
-                    <li><i class="fas fa-check"></i> 代码高亮显示</li>
-                    <li><i class="fas fa-check"></i> LaTeX数学公式渲染</li>
-                    <li><i class="fas fa-check"></i> 深色/浅色主题切换</li>
-                    <li><i class="fas fa-check"></i> 响应式设计</li>
-                    <li><i class="fas fa-check"></i> 迷你袋鼠四散特效 🦘</li>
-                </ul>
-                <p><strong>提示：</strong>点击页面任意位置，都会有可爱的小袋鼠向四周散开哦！</p>
+            <div class="profile-content">
+                <div class="profile-avatar-large">
+                    <img src="assets/avatar.jpg" alt="头像" class="avatar-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\'fas fa-user\'></i>'">
+                </div>
+                <div class="profile-info">
+                    <h3>ciaowenxu-qwq</h3>
+                    <p class="profile-bio">算法竞赛爱好者 | 前端折腾者 | 静态博客玩家</p>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">篇文章</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">4</span>
+                            <span class="stat-label">分类</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">2026</span>
+                            <span class="stat-label">入驻年份</span>
+                        </div>
+                    </div>
+                    <div class="profile-links">
+                        <a href="#" class="profile-link"><i class="fab fa-github"></i> GitHub</a>
+                        <a href="#" class="profile-link"><i class="fas fa-envelope"></i> 联系我</a>
+                        <a href="#" class="profile-link"><i class="fas fa-rss"></i> RSS订阅</a>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
 
     <footer class="footer">
-        <p>&copy; 2024 xiaowenxu-qwqのBlog | 使用HTML/CSS/JS构建</p>
+        <p>&copy; 2024 ciaowenxu-qwqのBlog | 使用HTML/CSS/JS构建</p>
         <div class="social-links">
             <a href="#"><i class="fab fa-github"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -122,6 +112,7 @@
         </div>
     </footer>
 
+    <!-- 复用主站脚本，保证功能统一 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>

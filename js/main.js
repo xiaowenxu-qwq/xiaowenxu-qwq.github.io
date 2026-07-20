@@ -6,63 +6,89 @@ import { spawnKangaroos } from './utils/kangaroo.js';
 import { smoothScrollTo } from './utils/helpers.js';
 
 // =======================
-// 初始化
+// 初始化（兼容独立页面）
 // =======================
 document.addEventListener('DOMContentLoaded', function() {
-    renderPosts(posts);
+    // 仅主站存在文章容器时渲染文章
+    const postsContainer = document.getElementById('postsContainer');
+    if (postsContainer) {
+        renderPosts(posts);
+    }
+
     setupEventListeners();
     initializeTheme();
     hljs.highlightAll();
+
+    // 仅存在文章内容区时渲染LaTeX（所有页面通用）
+    const postContent = document.getElementById('postContent');
+    if (postContent) {
+        renderMathInElement(postContent, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            throwOnError: false
+        });
+    }
 });
 
 // =======================
-// 事件监听器
+// 事件监听器（兼容独立页面）
 // =======================
 function setupEventListeners() {
     const postsContainer = document.getElementById('postsContainer');
     const backBtn = document.getElementById('backBtn');
     const themeToggle = document.getElementById('themeToggle');
     
-    // 文章点击事件
-    postsContainer?.addEventListener('click', function(e) {
-        const postCard = e.target.closest('.post-card');
-        if (postCard) {
-            const postId = parseInt(postCard.dataset.id);
-            showPostDetail(postId, posts);
-        }
-    });
+    // 仅主站存在文章容器时绑定相关事件
+    if (postsContainer) {
+        postsContainer.addEventListener('click', function(e) {
+            const postCard = e.target.closest('.post-card');
+            if (postCard) {
+                const postId = parseInt(postCard.dataset.id);
+                showPostDetail(postId, posts);
+            }
+        });
+    }
+
+    if (backBtn) {
+        backBtn.addEventListener('click', hidePostDetail);
+    }
     
-    // 返回按钮
-    backBtn?.addEventListener('click', hidePostDetail);
+    // 主题切换（所有页面生效）
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
     
-    // 主题切换
-    themeToggle?.addEventListener('click', toggleTheme);
-    
-    // 袋鼠点击特效（全屏响应）
+    // 袋鼠点击特效（所有页面生效）
     document.addEventListener('click', function(e) {
         spawnKangaroos(e.clientX, e.clientY);
     });
 
-    // =======================
-    // 侧边栏相关逻辑
-    // =======================
+    // 侧边栏导航逻辑
     const sidebarLinks = document.querySelectorAll('.sidebar-link');
 
-    // 点击侧边栏链接高亮
     sidebarLinks.forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
-            sidebarLinks.forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-            smoothScrollTo(this.getAttribute('href'));
+            const targetId = this.getAttribute('href');
+            // 仅当前页面存在对应锚点时阻止默认行为，否则直接跳转页面
+            if (targetId.startsWith('#') && document.querySelector(targetId)) {
+                e.preventDefault();
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                smoothScrollTo(targetId);
+            }
         });
     });
 
-    // 滚动时自动高亮侧边栏对应项
+    // 滚动高亮（仅当前页面有section时生效）
     window.addEventListener('scroll', function() {
         const sections = document.querySelectorAll('section[id]');
+        if (sections.length === 0) return;
+        
         const scrollPos = window.scrollY + 100;
-
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
             const sectionHeight = section.clientHeight;
@@ -71,7 +97,7 @@ function setupEventListeners() {
             if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
                 sidebarLinks.forEach(link => {
                     link.classList.remove('active');
-                    if (link.getAttribute('href') === sectionId) {
+                    if (link.getAttribute('href') === sectionId || link.getAttribute('href') === `index.html${sectionId}`) {
                         link.classList.add('active');
                     }
                 });
