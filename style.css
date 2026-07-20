@@ -323,9 +323,12 @@ body {
 .post-meta {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 0.85rem;
     color: #6b7280;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .post-excerpt {
@@ -347,6 +350,53 @@ body {
     padding: 0.25rem 0.75rem;
     border-radius: 1rem;
     font-size: 0.75rem;
+}
+
+/* =======================
+   最新文章标记样式 + 呼吸动画
+   ======================= */
+.post-date-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    transition: var(--transition);
+    white-space: nowrap;
+    will-change: transform, opacity, box-shadow; /* 优化动画性能 */
+}
+
+.post-date-badge.new {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+    /* 呼吸动画：2秒循环，缓动，无限播放 */
+    animation: breath 2s ease-in-out infinite;
+}
+
+/* 深色主题适配 */
+.dark-theme .post-date-badge.new {
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.2);
+}
+
+/* 呼吸动画关键帧 */
+@keyframes breath {
+    0%, 100% {
+        opacity: 0.85;
+        transform: scale(1);
+        box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.04);
+        box-shadow: 0 2px 8px rgba(255, 107, 107, 0.45);
+    }
+}
+
+/* 无障碍适配：用户开启「减少动画」时关闭呼吸效果 */
+@media (prefers-reduced-motion: reduce) {
+    .post-date-badge.new {
+        animation: none;
+        transform: none;
+    }
 }
 
 /* 文章详情 */
@@ -522,6 +572,11 @@ body {
     
     .posts-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* 移动端最新标记适配 */
+    .post-date-badge.new {
+        margin-left: 0;
     }
 }
 
