@@ -46,7 +46,7 @@ body {
     background-color: var(--card-bg);
     border-right: 1px solid var(--border-color);
     box-shadow: var(--shadow);
-    z-index: 101; /* 高于顶栏，避免被遮挡 */
+    z-index: 99; /* 高于顶栏，避免被遮挡 */
     transition: var(--transition);
     overflow: hidden;
     display: flex;
