@@ -3,8 +3,8 @@
     --secondary-color: #1e40af;
     --bg-color: #ffffff;
     --text-color: #1f2937;
-    --card-bg: #f8fafc;
-    --border-color: #e5e7eb;
+    --card-bg: rgba(248, 250, 252, 0.8); /* 半透明化：80%不透明度 */
+    --border-color: rgba(229, 231, 235, 0.8);
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
 }
@@ -14,8 +14,8 @@
     --secondary-color: #60a5fa;
     --bg-color: #0f172a;
     --text-color: #f1f5f9;
-    --card-bg: #1e293b;
-    --border-color: #334155;
+    --card-bg: rgba(30, 41, 59, 0.8); /* 深色模式半透明 */
+    --border-color: rgba(51, 65, 85, 0.8);
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
@@ -32,25 +32,32 @@ body {
     line-height: 1.6;
     transition: var(--transition);
     overflow-x: hidden;
+    /* 添加背景纹理增强半透明效果 */
+    background-image: 
+        radial-gradient(at 40% 20%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, rgba(96, 165, 250, 0.05) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
 }
 
 /* =======================
-   左侧边栏样式
+   左侧边栏样式（不被半透明影响）
    ======================= */
 .sidebar {
     position: fixed;
     left: 0;
-    top: 0;
-    height: 100vh;
+    top: 75px; /* 从顶栏底部开始，避免遮挡 */
+    height: calc(100vh - 75px);
     width: 60px;
     background-color: var(--card-bg);
     border-right: 1px solid var(--border-color);
     box-shadow: var(--shadow);
-    z-index: 99; /* 高于顶栏，避免被遮挡 */
+    z-index: 99; /* 低于顶栏，避免遮挡搜索框 */
     transition: var(--transition);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    backdrop-filter: blur(10px); /* 毛玻璃效果 */
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .sidebar:hover {
@@ -63,12 +70,6 @@ body {
     flex-direction: column;
     height: 100%;
     padding: 1.5rem 0;
-}
-
-/* 已移除侧边栏头像相关样式 */
-
-.sidebar-nav {
-    flex: 1;
 }
 
 .sidebar-nav ul {
@@ -139,14 +140,16 @@ body {
 }
 
 /* =======================
-   导航栏样式
+   导航栏样式（不被半透明影响）
    ======================= */
 .header {
     background-color: var(--card-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     box-shadow: var(--shadow);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 100; /* 高于侧边栏，确保搜索框可点击 */
 }
 
 .navbar {
@@ -158,6 +161,7 @@ body {
     margin: 0 auto;
     padding-left: calc(60px + 5%);
     transition: var(--transition);
+    gap: 1.5rem;
 }
 
 .logo {
@@ -167,16 +171,83 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary-color);
+    flex-shrink: 0;
 }
 
-/* 新增：顶栏右侧区域（头像+主题切换对齐） */
+/* 新增：搜索框样式 */
+.search-box {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    color: #6b7280;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.6rem 2.5rem 0.6rem 2.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 2rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    transition: var(--transition);
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+}
+
+.search-clear {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: var(--transition);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.search-clear.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-clear:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--text-color);
+}
+
 .navbar-right {
     display: flex;
     align-items: center;
     gap: 1rem;
+    flex-shrink: 0;
 }
 
-/* 新增：顶栏头像样式 */
 .header-avatar {
     width: 40px;
     height: 40px;
@@ -195,9 +266,6 @@ body {
 }
 
 .header-avatar:hover {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
     transform: scale(1.05);
 }
 
@@ -239,7 +307,7 @@ body {
 }
 
 /* =======================
-   英雄区域
+   英雄区域（半透明化）
    ======================= */
 .hero {
     text-align: center;
@@ -248,6 +316,8 @@ body {
     color: white;
     border-radius: 1rem;
     margin-bottom: 3rem;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .hero h1 {
@@ -278,105 +348,36 @@ body {
 }
 
 /* =======================
-   新增：个人空间样式
-   ======================= */
-.profile-section {
-    background-color: var(--card-bg);
-    border-radius: 1rem;
-    padding: 2rem;
-    margin-bottom: 3rem;
-    border: 1px solid var(--border-color);
-}
-
-.profile-section h2 {
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--primary-color);
-}
-
-.profile-content {
-    display: flex;
-    gap: 2.5rem;
-    align-items: flex-start;
-}
-
-.profile-avatar-large {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 3rem;
-    overflow: hidden;
-    border: 3px solid var(--border-color);
-    flex-shrink: 0;
-}
-
-.profile-avatar-large .avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-info {
-    flex: 1;
-}
-
-.profile-info h3 {
-    font-size: 1.8rem;
-    margin-bottom: 0.5rem;
-    color: var(--primary-color);
-}
-
-.profile-bio {
-    color: #6b7280;
-    margin-bottom: 1.5rem;
-    font-size: 1rem;
-}
-
-.profile-stats {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-}
-
-.profile-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.profile-link {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.profile-link:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-2px);
-}
-
-/* =======================
-   文章网格
+   文章网格（半透明化核心）
    ======================= */
 .posts-section h2 {
     margin-bottom: 2rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+/* 无搜索结果提示 */
+.no-results {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+}
+
+.no-results i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.no-results p {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.no-results-hint {
+    font-size: 0.9rem;
+    opacity: 0.7;
 }
 
 .posts-grid {
@@ -387,18 +388,22 @@ body {
 }
 
 .post-card {
-    background-color: var(--card-bg);
+    background-color: var(--card-bg); /* 使用半透明变量 */
     border-radius: 0.75rem;
     overflow: hidden;
     box-shadow: var(--shadow);
     transition: var(--transition);
     cursor: pointer;
     border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px); /* 毛玻璃效果 */
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0.8; /* 透明度80% */
 }
 
 .post-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    opacity: 1; /* 悬停时恢复不透明 */
 }
 
 .post-header {
@@ -474,14 +479,17 @@ body {
 }
 
 /* =======================
-   文章详情
+   文章详情（半透明化）
    ======================= */
 .post-detail {
-    background-color: var(--card-bg);
+    background-color: var(--card-bg); /* 使用半透明变量 */
     border-radius: 1rem;
     padding: 2rem;
     margin-bottom: 3rem;
     border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0.8; /* 透明度80% */
 }
 
 .back-btn {
@@ -535,14 +543,17 @@ body {
 }
 
 /* =======================
-   关于部分
+   关于部分（半透明化）
    ======================= */
 .about-section {
-    background-color: var(--card-bg);
+    background-color: var(--card-bg); /* 使用半透明变量 */
     border-radius: 1rem;
     padding: 2rem;
     margin-bottom: 3rem;
     border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0.8; /* 透明度80% */
 }
 
 .about-content ul {
@@ -562,13 +573,16 @@ body {
 }
 
 /* =======================
-   页脚
+   页脚（半透明化）
    ======================= */
 .footer {
-    background-color: var(--card-bg);
+    background-color: var(--card-bg); /* 使用半透明变量 */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     text-align: center;
     padding: 2rem;
     border-top: 1px solid var(--border-color);
+    opacity: 0.8; /* 透明度80% */
 }
 
 .social-links {
@@ -615,6 +629,8 @@ body {
    ======================= */
 @media (max-width: 768px) {
     .sidebar {
+        top: 65px;
+        height: calc(100vh - 65px);
         width: 0;
         border: none;
     }
@@ -625,6 +641,14 @@ body {
 
     .navbar {
         padding-left: 5%;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-box {
+        order: 3;
+        max-width: 100%;
+        width: 100%;
     }
 
     .navbar-right {
@@ -662,23 +686,6 @@ body {
     
     .posts-grid {
         grid-template-columns: 1fr;
-    }
-
-    /* 个人空间移动端适配 */
-    .profile-content {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .profile-avatar-large {
-        width: 100px;
-        height: 100px;
-        font-size: 2.5rem;
-    }
-
-    .profile-links {
-        justify-content: center;
     }
 
     /* 移动端最新标记适配 */
@@ -724,28 +731,105 @@ body {
         animation: none;
     }
 }
-/* 个人空间头部布局 */
-.profile-header {
+
+/* =======================
+   阅读进度条
+   ======================= */
+.reading-progress-bar {
+    position: fixed;
+    top: 0; /* 固定在顶栏的最顶部边缘，如果觉得挡住字可以改成 75px */
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), #8b5cf6);
+    width: 0%;
+    z-index: 101; /* 比顶栏略高一点 */
+    transition: width 0.1s ease-out;
+    border-radius: 0 2px 2px 0;
+}
+
+/* =======================
+   搜索历史面板
+   ======================= */
+.search-history {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: 100%;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: var(--transition);
+    z-index: 102;
+    overflow: hidden;
+}
+
+.search-history.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.search-history-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.back-to-home {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    text-decoration: none;
-    font-size: 0.9rem;
+.search-history-header button {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: var(--transition);
+}
+
+.search-history-header button:hover {
+    color: var(--secondary-color);
+}
+
+.search-history-list {
+    list-style: none;
+    padding: 0.5rem 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.search-history-item {
+    padding: 0.6rem 1rem;
+    cursor: pointer;
     transition: var(--transition);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    font-size: 0.9rem;
 }
 
-.back-to-home:hover {
-    background-color: var(--secondary-color);
-    transform: translateY(-2px);
+.search-history-item:hover {
+    background-color: rgba(37, 99, 235, 0.1);
+}
+
+.search-history-item i {
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+/* 移动端适配：搜索历史全宽 */
+@media (max-width: 768px) {
+    .search-history {
+        position: fixed;
+        top: 70px;
+        left: 5%;
+        width: 90%;
+    }
 }

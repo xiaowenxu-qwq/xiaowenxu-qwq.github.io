@@ -51,11 +51,29 @@
                 <span>xiaowenxu-qwqのBlog</span>
             </div>
             
+            <!-- 搜索框 -->
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="搜索文章标题..." class="search-input">
+                <button class="search-clear" id="searchClear" aria-label="清除搜索">
+                    <i class="fas fa-times"></i>
+                </button>
+                <!-- 搜索历史下拉面板 -->
+                <div class="search-history" id="searchHistory">
+                    <div class="search-history-header">
+                        <span>最近搜索</span>
+                        <button id="clearHistory">清空</button>
+                    </div>
+                    <ul class="search-history-list" id="searchHistoryList">
+                        <!-- JS动态注入 -->
+                    </ul>
+                </div>
+            </div>
+            
             <div class="navbar-right">
                 <button class="theme-toggle" id="themeToggle">
                     <i class="fas fa-moon"></i>
                 </button>
-                <!-- 头像跳转至独立个人中心 -->
                 <a href="profile.html" class="header-avatar" id="profileLink">
                     <img src="assets/avatar.jpg" alt="头像" class="avatar-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\'fas fa-user\'></i>'">
                 </a>
@@ -85,6 +103,12 @@
 
         <section id="posts" class="posts-section">
             <h2><i class="fas fa-list-alt"></i> 最新文章</h2>
+            <!-- 无搜索结果提示 -->
+            <div id="noResults" class="no-results hidden">
+                <i class="fas fa-search"></i>
+                <p>未找到匹配的文章</p>
+                <span class="no-results-hint">尝试使用其他关键词</span>
+            </div>
             <div class="posts-grid" id="postsContainer"></div>
         </section>
 
@@ -122,6 +146,7 @@
         </div>
     </footer>
 
+    <!-- 脚本引入顺序 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
