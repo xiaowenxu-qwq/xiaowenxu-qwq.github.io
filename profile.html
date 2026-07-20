@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
-    <!-- 左侧边栏 -->
+    <!-- 左侧边栏（保持与主站一致） -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-content">
             <nav class="sidebar-nav">
@@ -51,11 +51,12 @@
                 <span>xiaowenxu-qwqのBlog</span>
             </div>
             
+            <!-- 个人中心不需要搜索框，只保留右侧功能区 -->
             <div class="navbar-right">
                 <button class="theme-toggle" id="themeToggle">
                     <i class="fas fa-moon"></i>
                 </button>
-                <!-- 个人中心内头像点击返回主站 -->
+                <!-- 头像点击返回主站 -->
                 <a href="index.html" class="header-avatar" id="profileLink" title="返回主页">
                     <img src="assets/avatar.jpg" alt="头像" class="avatar-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\'fas fa-user\'></i>'">
                 </a>
@@ -64,7 +65,7 @@
     </header>
 
     <main class="container">
-        <!-- 独立个人空间内容 -->
+        <!-- 个人空间内容 -->
         <section id="profile" class="profile-section">
             <div class="profile-header">
                 <h2><i class="fas fa-user-circle"></i> 个人空间</h2>
@@ -112,6 +113,7 @@
         </div>
     </footer>
 
+    <!-- 脚本引入（与主站一致，但内部有容错机制） -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
