@@ -18,12 +18,7 @@
     <!-- 左侧边栏 -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-content">
-            <div class="avatar-container">
-                <div class="avatar">
-                    <img src="assets/avatar.jpg" alt="头像" class="avatar-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\'fas fa-user\'></i>'">
-                </div>
-                <h3 class="sidebar-title">xiaowenxu-qwq</h3>
-            </div>
+            <!-- 已移除侧边栏头像 -->
             
             <nav class="sidebar-nav">
                 <ul>
@@ -31,6 +26,13 @@
                         <a href="#home" class="sidebar-link active">
                             <i class="fas fa-home"></i>
                             <span>主页</span>
+                        </a>
+                    </li>
+                    <!-- 新增：个人空间侧边栏入口 -->
+                    <li>
+                        <a href="#profile" class="sidebar-link">
+                            <i class="fas fa-user-circle"></i>
+                            <span>个人空间</span>
                         </a>
                     </li>
                     <li>
@@ -41,7 +43,7 @@
                     </li>
                     <li>
                         <a href="#about" class="sidebar-link">
-                            <i class="fas fa-user"></i>
+                            <i class="fas fa-info-circle"></i>
                             <span>介绍</span>
                         </a>
                     </li>
@@ -60,9 +62,17 @@
                 <i class="fas fa-blog"></i>
                 <span>xiaowenxu-qwqのBlog</span>
             </div>
-            <button class="theme-toggle" id="themeToggle">
-                <i class="fas fa-moon"></i>
-            </button>
+            
+            <!-- 新增：顶栏右侧区域（主题切换+头像） -->
+            <div class="navbar-right">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <!-- 右上角头像，点击进入个人空间 -->
+                <a href="#profile" class="header-avatar" id="profileLink">
+                    <img src="assets/avatar.jpg" alt="头像" class="avatar-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\'fas fa-user\'></i>'">
+                </a>
+            </div>
         </nav>
     </header>
 
@@ -72,16 +82,49 @@
             <p>记录开发心得，分享技术见解</p>
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number">6</span>
+                    <span class="stat-number">5</span>
                     <span class="stat-label">篇文章</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">5</span>
+                    <span class="stat-number">4</span>
                     <span class="stat-label">分类</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-number">2026</span>
                     <span class="stat-label">创建年份</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 新增：个人空间板块 -->
+        <section id="profile" class="profile-section">
+            <h2><i class="fas fa-user-circle"></i> 个人空间</h2>
+            <div class="profile-content">
+                <div class="profile-avatar-large">
+                    <img src="assets/avatar.jpg" alt="头像" class="avatar-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\'fas fa-user\'></i>'">
+                </div>
+                <div class="profile-info">
+                    <h3>xiaowenxu-qwq</h3>
+                    <p class="profile-bio">算法竞赛爱好者 | 前端折腾者 | 静态博客玩家</p>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">5</span>
+                            <span class="stat-label">篇文章</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">4</span>
+                            <span class="stat-label">分类</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">2026</span>
+                            <span class="stat-label">入驻年份</span>
+                        </div>
+                    </div>
+                    <div class="profile-links">
+                        <a href="#" class="profile-link"><i class="fab fa-github"></i> GitHub</a>
+                        <a href="#" class="profile-link"><i class="fas fa-envelope"></i> 联系我</a>
+                        <a href="#" class="profile-link"><i class="fas fa-rss"></i> RSS订阅</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -116,7 +159,7 @@
     </main>
 
     <footer class="footer">
-        <p>&copy; 2026 xiaowenxu-qwqのBlog | 使用HTML/CSS/JS构建</p>
+        <p>&copy; 2024 xiaowenxu-qwqのBlog | 使用HTML/CSS/JS构建</p>
         <div class="social-links">
             <a href="#"><i class="fab fa-github"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -124,7 +167,7 @@
         </div>
     </footer>
 
-    <!-- 脚本引入顺序很重要 -->
+    <!-- 脚本引入顺序 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     

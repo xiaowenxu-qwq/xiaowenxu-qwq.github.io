@@ -46,7 +46,7 @@ body {
     background-color: var(--card-bg);
     border-right: 1px solid var(--border-color);
     box-shadow: var(--shadow);
-    z-index: 99;
+    z-index: 101; /* 高于顶栏，避免被遮挡 */
     transition: var(--transition);
     overflow: hidden;
     display: flex;
@@ -55,6 +55,7 @@ body {
 
 .sidebar:hover {
     width: 220px;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.15);
 }
 
 .sidebar-content {
@@ -64,55 +65,7 @@ body {
     padding: 1.5rem 0;
 }
 
-.avatar-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 1rem;
-    margin-bottom: 2rem;
-}
-
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.2rem;
-    overflow: hidden;
-    transition: var(--transition);
-    border: 2px solid var(--border-color);
-}
-
-.sidebar:hover .avatar {
-    width: 80px;
-    height: 80px;
-    font-size: 2rem;
-}
-
-.avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.sidebar-title {
-    margin-top: 1rem;
-    font-size: 0;
-    opacity: 0;
-    transition: var(--transition);
-    white-space: nowrap;
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-.sidebar:hover .sidebar-title {
-    font-size: 1.1rem;
-    opacity: 1;
-}
+/* 已移除侧边栏头像相关样式 */
 
 .sidebar-nav {
     flex: 1;
@@ -185,7 +138,9 @@ body {
     50% { transform: translateY(-5px); }
 }
 
-/* 导航栏 */
+/* =======================
+   导航栏样式
+   ======================= */
 .header {
     background-color: var(--card-bg);
     box-shadow: var(--shadow);
@@ -214,6 +169,44 @@ body {
     color: var(--primary-color);
 }
 
+/* 新增：顶栏右侧区域（头像+主题切换对齐） */
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* 新增：顶栏头像样式 */
+.header-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    overflow: hidden;
+    border: 2px solid var(--border-color);
+    transition: var(--transition);
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.header-avatar:hover {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.header-avatar .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .theme-toggle {
     background: none;
     border: 2px solid var(--border-color);
@@ -235,7 +228,9 @@ body {
     border-color: var(--primary-color);
 }
 
-/* 主容器 */
+/* =======================
+   主容器
+   ======================= */
 .container {
     max-width: calc(1200px - 60px);
     margin: 0 0 0 60px;
@@ -243,7 +238,9 @@ body {
     transition: var(--transition);
 }
 
-/* 英雄区域 */
+/* =======================
+   英雄区域
+   ======================= */
 .hero {
     text-align: center;
     padding: 4rem 0;
@@ -280,7 +277,101 @@ body {
     opacity: 0.9;
 }
 
-/* 文章网格 */
+/* =======================
+   新增：个人空间样式
+   ======================= */
+.profile-section {
+    background-color: var(--card-bg);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    border: 1px solid var(--border-color);
+}
+
+.profile-section h2 {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+}
+
+.profile-content {
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-start;
+}
+
+.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+    overflow: hidden;
+    border: 3px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.profile-avatar-large .avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-info h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.profile-bio {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.profile-link {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.profile-link:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* =======================
+   文章网格
+   ======================= */
 .posts-section h2 {
     margin-bottom: 2rem;
     display: flex;
@@ -331,6 +422,36 @@ body {
     gap: 0.5rem;
 }
 
+/* 最新文章标记样式 + 呼吸动画 */
+.post-date-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    transition: var(--transition);
+    white-space: nowrap;
+    will-change: transform, opacity, box-shadow;
+}
+
+.post-date-badge.new {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+    animation: breath 2s ease-in-out infinite;
+}
+
+@keyframes breath {
+    0%, 100% {
+        opacity: 0.85;
+        transform: scale(1);
+        box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.04);
+        box-shadow: 0 2px 8px rgba(255, 107, 107, 0.45);
+    }
+}
+
 .post-excerpt {
     padding: 0 1.5rem 1.5rem;
     color: var(--text-color);
@@ -353,53 +474,8 @@ body {
 }
 
 /* =======================
-   最新文章标记样式 + 呼吸动画
+   文章详情
    ======================= */
-.post-date-badge {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.6rem;
-    border-radius: 12px;
-    transition: var(--transition);
-    white-space: nowrap;
-    will-change: transform, opacity, box-shadow; /* 优化动画性能 */
-}
-
-.post-date-badge.new {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-    color: white;
-    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
-    /* 呼吸动画：2秒循环，缓动，无限播放 */
-    animation: breath 2s ease-in-out infinite;
-}
-
-/* 深色主题适配 */
-.dark-theme .post-date-badge.new {
-    box-shadow: 0 2px 4px rgba(255, 107, 107, 0.2);
-}
-
-/* 呼吸动画关键帧 */
-@keyframes breath {
-    0%, 100% {
-        opacity: 0.85;
-        transform: scale(1);
-        box-shadow: 0 2px 4px rgba(255, 107, 107, 0.3);
-    }
-    50% {
-        opacity: 1;
-        transform: scale(1.04);
-        box-shadow: 0 2px 8px rgba(255, 107, 107, 0.45);
-    }
-}
-
-/* 无障碍适配：用户开启「减少动画」时关闭呼吸效果 */
-@media (prefers-reduced-motion: reduce) {
-    .post-date-badge.new {
-        animation: none;
-        transform: none;
-    }
-}
-
-/* 文章详情 */
 .post-detail {
     background-color: var(--card-bg);
     border-radius: 1rem;
@@ -458,7 +534,9 @@ body {
     font-style: italic;
 }
 
-/* 关于部分 */
+/* =======================
+   关于部分
+   ======================= */
 .about-section {
     background-color: var(--card-bg);
     border-radius: 1rem;
@@ -483,7 +561,9 @@ body {
     color: #10b981;
 }
 
-/* 页脚 */
+/* =======================
+   页脚
+   ======================= */
 .footer {
     background-color: var(--card-bg);
     text-align: center;
@@ -547,6 +627,16 @@ body {
         padding-left: 5%;
     }
 
+    .navbar-right {
+        gap: 0.75rem;
+    }
+
+    .header-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
     .container {
         margin-left: 0;
         max-width: 100%;
@@ -572,6 +662,23 @@ body {
     
     .posts-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* 个人空间移动端适配 */
+    .profile-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .profile-avatar-large {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+    }
+
+    .profile-links {
+        justify-content: center;
     }
 
     /* 移动端最新标记适配 */
@@ -604,5 +711,16 @@ body {
     100% {
         transform: translate(var(--scatter-x), var(--scatter-y)) rotate(var(--spin-deg)) scale(0);
         opacity: 0;
+    }
+}
+
+/* 无障碍适配：减少动画 */
+@media (prefers-reduced-motion: reduce) {
+    .post-date-badge.new {
+        animation: none;
+        transform: none;
+    }
+    .kangaroo.scatter {
+        animation: none;
     }
 }
