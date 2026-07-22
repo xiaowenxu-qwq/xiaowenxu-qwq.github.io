@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人空间 - xiaowenxu-qwqのBlog</title>
+    <!-- 核心样式 -->
     <link rel="stylesheet" href="style.css">
+    <!-- 第三方样式 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- 左侧边栏 -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-content">
             <nav class="sidebar-nav">
@@ -40,6 +43,7 @@
         </div>
     </aside>
 
+    <!-- 顶部导航栏 -->
     <header class="header">
         <nav class="navbar">
             <div class="logo">
@@ -57,7 +61,9 @@
         </nav>
     </header>
 
+    <!-- 主内容区 -->
     <main class="container">
+        <!-- 个人信息板块 -->
         <section id="profile" class="profile-section">
             <div class="profile-header">
                 <h2><i class="fas fa-user-circle"></i> 个人空间</h2>
@@ -74,11 +80,11 @@
                     <p class="profile-bio">算法竞赛爱好者 | 前端折腾者 | 静态博客玩家</p>
                     <div class="profile-stats">
                         <div class="stat-item">
-                            <span class="stat-number">5</span>
+                            <span class="stat-number">6</span>
                             <span class="stat-label">篇文章</span>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-number">4</span>
+                            <span class="stat-number">5</span>
                             <span class="stat-label">分类</span>
                         </div>
                         <div class="stat-item">
@@ -95,19 +101,21 @@
             </div>
         </section>
 
-        <!-- ✅ 新增：个人中心文章列表区域 -->
+        <!-- ✅ 核心修复：个人中心文章列表板块 -->
         <section id="profilePosts" class="posts-section">
             <h2><i class="fas fa-list-alt"></i> 我的文章</h2>
-            <!-- 无搜索结果提示（个人中心也复用这个逻辑） -->
+            <!-- 无搜索结果提示（与main.js中的ID完全对应） -->
             <div id="profileNoResults" class="no-results hidden">
                 <i class="fas fa-search"></i>
                 <p>未找到匹配的文章</p>
                 <span class="no-results-hint">尝试使用其他关键词</span>
             </div>
+            <!-- 文章容器（必须与main.js中的渲染目标ID一致） -->
             <div class="posts-grid" id="profilePostsContainer"></div>
         </section>
     </main>
 
+    <!-- 页脚 -->
     <footer class="footer">
         <p>&copy; 2024 xiaowenxu-qwqのBlog | 使用HTML/CSS/JS构建</p>
         <div class="social-links">
@@ -117,10 +125,16 @@
         </div>
     </footer>
 
+    <!-- ✅ 依赖库引入（顺序不可颠倒） -->
+    <!-- 代码高亮 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <!-- Markdown解析 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+    <!-- LaTeX公式渲染 -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- ✅ 主逻辑引入（必须为module类型，路径相对于当前html） -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
