@@ -1,3 +1,13 @@
+/**
+ * 主入口文件 - 修复版
+ * 修复问题：
+ * 1. 本地 file:// 协议下 LocalStorage 访问报错
+ * 2. 个人中心文章列表不渲染问题
+ * 3. 路径引用错误
+ * 4. 渲染逻辑规范化（不再硬编码 HTML）
+ */
+
+// ======================= 依赖导入（路径严格校验） =======================
 import { posts } from './data/posts.js';
 import { renderPosts } from './components/postsList.js';
 import { showPostDetail, hidePostDetail } from './components/postDetail.js';
@@ -5,120 +15,168 @@ import { toggleTheme, initializeTheme } from './components/theme.js';
 import { spawnKangaroos } from './utils/kangaroo.js';
 import { smoothScrollTo } from './utils/helpers.js';
 
+// ======================= 全局状态 =======================
 let allPosts = [];
 let filteredPosts = [];
 const MAX_HISTORY = 5;
 
-// ✅ 内存存储替代 LocalStorage（解决 file:// 协议问题）
+// ✅ 内存存储兜底（解决 file:// 协议 LocalStorage 禁用问题）
 let memoryStorage = {
     theme: null,
     searchHistory: []
 };
 
-// 安全获取DOM元素
+// ======================= 工具函数 =======================
+/**
+ * 安全获取 DOM 元素（避免空指针报错）
+ */
 const safeGetElement = (id) => document.getElementById(id);
+
+/**
+ * 检测浏览器是否支持 LocalStorage（兼容 file:// 协议）
+ */
+function isLocalStorageSupported() {
+    try {
+        const testKey = '__blog_test__';
+        localStorage.setItem(testKey, testKey);
+        localStorage.removeItem(testKey);
+        return true;
+    } catch (e) {
+        console.warn('⚠️ LocalStorage 不可用，将使用内存存储');
+        return false;
+    }
+}
+const canUseLocalStorage = isLocalStorageSupported();
+
+// DOM 元素缓存（避免重复查询）
 const searchInput = safeGetElement('searchInput');
 const searchClear = safeGetElement('searchClear');
 const searchHistory = safeGetElement('searchHistory');
 const searchHistoryList = safeGetElement('searchHistoryList');
 const clearHistoryBtn = safeGetElement('clearHistory');
-let backToTopBtn;
+let backToTopBtn = null;
 
-// ✅ 检测是否支持 LocalStorage（用于主题持久化）
-function isLocalStorageSupported() {
-    try {
-        const testKey = '__test__';
-        localStorage.setItem(testKey, testKey);
-        localStorage.removeItem(testKey);
-        return true;
-    } catch (e) {
-        return false;
+// ======================= 初始化逻辑 =======================
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('%c✅ 博客初始化完成', 'color: #10b981; font-weight: bold;');
+    console.log(`📄 当前页面：${window.location.pathname}`);
+    console.log(`🔧 LocalStorage 支持：${canUseLocalStorage}`);
+
+    // 初始化文章数据
+    allPosts = Array.isArray(posts) ? [...posts] : [];
+    filteredPosts = [...allPosts];
+    console.log(`📚 加载文章总数：${allPosts.length}`);
+
+    // 初始化基础功能
+    initializeTheme();
+    setupEventListeners();
+    
+    // 延迟高亮代码块（确保 DOM 已渲染）
+    requestAnimationFrame(() => hljs.highlightAll());
+
+    // 页面路由分发
+    handlePageRouting();
+
+    // 初始化通用组件
+    createProgressBar();
+    createBackToTopButton();
+    if (canUseLocalStorage) loadSearchHistory();
+});
+
+// ======================= 页面路由（核心修复点） =======================
+function handlePageRouting() {
+    const path = window.location.pathname;
+    const isProfilePage = path.includes('profile.html');
+    const isHomePage = path.includes('index.html') || path === '/' || path.endsWith('/');
+
+    console.log(`🔀 路由分发：主页=${isHomePage}，个人中心=${isProfilePage}`);
+
+    // 1. 控制页面区块显示/隐藏
+    const homeSection = safeGetElement('home');
+    const aboutSection = safeGetElement('about');
+    const profileSection = safeGetElement('profile');
+    const profilePostsSection = safeGetElement('profilePosts');
+
+    if (homeSection) homeSection.style.display = isHomePage ? 'block' : 'none';
+    if (aboutSection) aboutSection.style.display = isHomePage ? 'block' : 'none';
+    if (profileSection) profileSection.style.display = isProfilePage ? 'block' : 'none';
+    if (profilePostsSection) profilePostsSection.style.display = isProfilePage ? 'block' : 'none';
+
+    // 2. 个人中心强制渲染所有文章（不走过滤逻辑）
+    if (isProfilePage) {
+        const profileContainer = safeGetElement('profilePostsContainer');
+        
+        if (!profileContainer) {
+            console.error('❌ 致命错误：未找到个人中心文章容器 #profilePostsContainer');
+            console.error('请检查 profile.html 中是否存在 <div id="profilePostsContainer">');
+            return;
+        }
+
+        if (allPosts.length === 0) {
+            console.warn('⚠️ 文章数据为空，请检查 data/posts.js 是否正确导出 posts');
+            profileContainer.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-book-open"></i>
+                    <p>暂无文章内容</p>
+                    <span class="no-results-hint">请检查 data/posts.js 配置</span>
+                </div>
+            `;
+            return;
+        }
+
+        console.log(`👤 开始渲染个人中心文章，数量：${allPosts.length}`);
+        // 调用标准渲染函数，保持样式和交互一致
+        renderPosts(allPosts, 'profilePostsContainer');
+        console.log('✅ 个人中心文章渲染完成');
+    }
+
+    // 3. 主页渲染文章
+    if (isHomePage) {
+        const homeContainer = safeGetElement('postsContainer');
+        if (homeContainer) {
+            console.log(`🏠 开始渲染主页文章，数量：${filteredPosts.length}`);
+            renderPosts(filteredPosts, 'postsContainer');
+        }
     }
 }
 
-const canUseLocalStorage = isLocalStorageSupported();
-
-// =======================
-// 初始化
-// =======================
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('✅ Blog initialized');
-    console.log('📄 Current page:', window.location.pathname);
-    console.log('🔧 LocalStorage supported:', canUseLocalStorage);
-    
-    allPosts = posts || [];
-    filteredPosts = [...allPosts];
-    
-    // 渲染文章列表
-    const postsContainer = safeGetElement('postsContainer');
-    const profilePostsContainer = safeGetElement('profilePostsContainer');
-    
-    if (postsContainer) {
-        console.log('🏠 Rendering posts on homepage');
-        renderPosts(filteredPosts, 'postsContainer');
-    }
-    
-    if (profilePostsContainer) {
-        console.log('👤 Rendering posts on profile page');
-        renderPosts(filteredPosts, 'profilePostsContainer');
-    }
-    
-    setupEventListeners();
-    initializeTheme();
-    
-    // 延迟高亮，确保DOM已渲染
-    setTimeout(() => {
-        hljs.highlightAll();
-    }, 100);
-    
-    // 只在主站加载搜索历史
-    if (searchInput && canUseLocalStorage) {
-        loadSearchHistory();
-    }
-    
-    createProgressBar();
-    createBackToTopButton();
-});
-
-// =======================
-// 事件监听器
-// =======================
+// ======================= 事件监听 =======================
 function setupEventListeners() {
-    const postsContainer = safeGetElement('postsContainer');
-    const profilePostsContainer = safeGetElement('profilePostsContainer');
-    const backBtn = safeGetElement('backBtn');
-    const themeToggle = safeGetElement('themeToggle');
-    
-    // 文章点击（支持双容器）
-    [postsContainer, profilePostsContainer].forEach(container => {
-        if (container) {
-            container.addEventListener('click', function(e) {
-                const postCard = e.target.closest('.post-card');
-                if (postCard) {
-                    const postId = parseInt(postCard.dataset.id);
-                    showPostDetail(postId, allPosts);
-                    enterReadingMode();
-                }
-            });
-        }
+    // 文章点击（同时支持主页和个人中心容器）
+    const containers = [
+        safeGetElement('postsContainer'),
+        safeGetElement('profilePostsContainer')
+    ].filter(Boolean); // 过滤不存在的容器
+
+    containers.forEach(container => {
+        container.addEventListener('click', (e) => {
+            const postCard = e.target.closest('.post-card');
+            if (postCard) {
+                const postId = Number(postCard.dataset.id);
+                showPostDetail(postId, allPosts);
+                enterReadingMode();
+            }
+        });
     });
 
+    // 主题切换
+    const themeToggle = safeGetElement('themeToggle');
+    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+
+    // 返回按钮
+    const backBtn = safeGetElement('backBtn');
     if (backBtn) {
         backBtn.addEventListener('click', () => {
             exitReadingMode();
             hidePostDetail();
         });
     }
-    
-    if (themeToggle) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
-    
-    // 搜索相关（仅在支持且存在时绑定）
+
+    // 搜索相关（仅主站生效）
     if (searchInput && canUseLocalStorage) {
         searchInput.addEventListener('input', handleSearchInput);
         searchInput.addEventListener('focus', () => {
-            if (searchHistoryList && searchHistoryList.children.length > 0) {
+            if (searchHistoryList?.children.length > 0) {
                 searchHistory?.classList.add('visible');
             }
         });
@@ -132,16 +190,17 @@ function setupEventListeners() {
             }
         });
     }
-    
+
+    // 搜索清除按钮
     if (searchClear) {
         searchClear.addEventListener('click', () => {
             if (searchInput) searchInput.value = '';
             filterPosts('');
             toggleClearButton('');
-            searchInput?.focus();
         });
     }
 
+    // 搜索历史点击
     if (searchHistoryList && canUseLocalStorage) {
         searchHistoryList.addEventListener('click', (e) => {
             const item = e.target.closest('.search-history-item');
@@ -155,34 +214,32 @@ function setupEventListeners() {
         });
     }
 
+    // 清空搜索历史
     if (clearHistoryBtn && canUseLocalStorage) {
         clearHistoryBtn.addEventListener('click', clearSearchHistory);
     }
-    
-    // 全局点击袋鼠特效
+
+    // 全局袋鼠特效
     document.addEventListener('click', (e) => {
         spawnKangaroos(e.clientX, e.clientY);
     });
 
+    // 滚动监听
     window.addEventListener('scroll', handleScroll);
 
-    // 侧边栏导航逻辑
-    const sidebarLinks = document.querySelectorAll('.sidebar-link');
-    sidebarLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            const targetHref = this.getAttribute('href');
-            
-            // 在个人中心页面，强制回主站
+    // 侧边栏导航逻辑（兼容个人中心强制回主页）
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const targetHref = link.getAttribute('href');
+
+            // 个人中心点击任何链接都强制回主站
             if (window.location.pathname.includes('profile.html')) {
-                if (targetHref.includes('#home') || targetHref === 'index.html') {
-                    window.location.href = 'index.html';
-                    return;
-                }
-                window.location.href = targetHref;
+                e.preventDefault();
+                window.location.href = targetHref.startsWith('#') ? 'index.html' : targetHref;
                 return;
             }
 
-            // 主站逻辑
+            // 主站首页链接逻辑
             if (targetHref.includes('#home') || targetHref === 'index.html' || targetHref === '#home') {
                 e.preventDefault();
                 exitReadingMode();
@@ -196,30 +253,32 @@ function setupEventListeners() {
                 return;
             }
 
+            // 阅读模式下点击锚点
             const postDetail = safeGetElement('postDetail');
             if (postDetail && !postDetail.classList.contains('hidden')) {
                 e.preventDefault();
                 exitReadingMode();
                 hidePostDetail();
                 setTimeout(() => {
-                    if (targetHref.startsWith('#') && document.querySelector(targetHref)) {
-                        smoothScrollTo(targetHref);
+                    if (targetHref.startsWith('#')) {
+                        const target = document.querySelector(targetHref);
+                        target?.scrollIntoView({ behavior: 'smooth' });
                     }
                 }, 100);
                 return;
             }
 
-            if (targetHref.startsWith('#') && document.querySelector(targetHref)) {
+            // 普通锚点跳转
+            if (targetHref.startsWith('#')) {
                 e.preventDefault();
-                smoothScrollTo(targetHref);
+                const target = document.querySelector(targetHref);
+                target?.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
 }
 
-// =======================
-// 搜索函数
-// =======================
+// ======================= 搜索逻辑 =======================
 function handleSearchInput() {
     if (!searchInput) return;
     const keyword = searchInput.value.trim();
@@ -228,45 +287,28 @@ function handleSearchInput() {
 }
 
 function filterPosts(keyword) {
-    const noResults = safeGetElement('noResults');
-    const profileNoResults = safeGetElement('profileNoResults');
-    
     if (!keyword) {
         filteredPosts = [...allPosts];
     } else {
-        filteredPosts = allPosts.filter(post => 
+        filteredPosts = allPosts.filter(post =>
             post.title.toLowerCase().includes(keyword.toLowerCase()) ||
             post.category.toLowerCase().includes(keyword.toLowerCase()) ||
             post.tags.some(tag => tag.toLowerCase().includes(keyword.toLowerCase()))
         );
     }
+
+    // 同时更新主页和个人中心的文章列表
+    const homeContainer = safeGetElement('postsContainer');
+    const profileContainer = safeGetElement('profilePostsContainer');
     
-    const postsContainer = safeGetElement('postsContainer');
-    const profilePostsContainer = safeGetElement('profilePostsContainer');
-    
-    if (postsContainer) {
-        renderPosts(filteredPosts, 'postsContainer');
-    }
-    
-    if (profilePostsContainer) {
-        renderPosts(filteredPosts, 'profilePostsContainer');
-    }
-    
-    if (noResults) {
-        if (filteredPosts.length === 0 && keyword) {
-            noResults.classList.remove('hidden');
-        } else {
-            noResults.classList.add('hidden');
-        }
-    }
-    
-    if (profileNoResults) {
-        if (filteredPosts.length === 0 && keyword) {
-            profileNoResults.classList.remove('hidden');
-        } else {
-            profileNoResults.classList.add('hidden');
-        }
-    }
+    if (homeContainer) renderPosts(filteredPosts, 'postsContainer');
+    if (profileContainer) renderPosts(filteredPosts, 'profilePostsContainer');
+
+    // 更新无结果提示
+    const noResults = safeGetElement('noResults');
+    const profileNoResults = safeGetElement('profileNoResults');
+    if (noResults) noResults.classList.toggle('hidden', !(filteredPosts.length === 0 && keyword));
+    if (profileNoResults) profileNoResults.classList.toggle('hidden', !(filteredPosts.length === 0 && keyword));
 }
 
 function toggleClearButton(keyword) {
@@ -275,58 +317,48 @@ function toggleClearButton(keyword) {
     }
 }
 
-// =======================
-// 搜索历史（内存存储版）
-// =======================
+// ======================= 搜索历史（兼容 LocalStorage 禁用） =======================
 function loadSearchHistory() {
     if (!canUseLocalStorage) return;
-    
     try {
         const history = JSON.parse(localStorage.getItem('blogSearchHistory') || '[]');
         renderSearchHistory(history);
     } catch (e) {
-        console.warn('Failed to load search history:', e);
-        renderSearchHistory([]);
+        console.warn('加载搜索历史失败：', e);
     }
 }
 
 function saveSearchHistory(keyword) {
     if (!canUseLocalStorage || !keyword || !searchHistoryList) return;
-    
     try {
         let history = JSON.parse(localStorage.getItem('blogSearchHistory') || '[]');
         history = history.filter(item => item !== keyword);
         history.unshift(keyword);
-        if (history.length > MAX_HISTORY) {
-            history = history.slice(0, MAX_HISTORY);
-        }
+        if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
         localStorage.setItem('blogSearchHistory', JSON.stringify(history));
         renderSearchHistory(history);
     } catch (e) {
-        console.warn('Failed to save search history:', e);
+        console.warn('保存搜索历史失败：', e);
     }
 }
 
 function clearSearchHistory() {
     if (!canUseLocalStorage) return;
-    
     try {
         localStorage.removeItem('blogSearchHistory');
         renderSearchHistory([]);
     } catch (e) {
-        console.warn('Failed to clear search history:', e);
+        console.warn('清空搜索历史失败：', e);
     }
 }
 
 function renderSearchHistory(history) {
     if (!searchHistoryList) return;
     searchHistoryList.innerHTML = '';
-    
     if (history.length === 0) {
         searchHistory?.classList.remove('visible');
         return;
     }
-    
     history.forEach(item => {
         const li = document.createElement('li');
         li.className = 'search-history-item';
@@ -336,29 +368,24 @@ function renderSearchHistory(history) {
     });
 }
 
-// =======================
-// 阅读模式 & 进度条 & TOC
-// =======================
+// ======================= 阅读模式 =======================
 function createProgressBar() {
     if (document.getElementById('readingProgressBar')) return;
-    const progressBar = document.createElement('div');
-    progressBar.className = 'reading-progress-bar';
-    progressBar.id = 'readingProgressBar';
-    document.body.appendChild(progressBar);
+    const bar = document.createElement('div');
+    bar.className = 'reading-progress-bar';
+    bar.id = 'readingProgressBar';
+    document.body.appendChild(bar);
 }
 
 function handleScroll() {
+    // 回到顶部按钮
     if (backToTopBtn) {
-        if (window.scrollY > 300) {
-            backToTopBtn.classList.add('visible');
-        } else {
-            backToTopBtn.classList.remove('visible');
-        }
+        backToTopBtn.classList.toggle('visible', window.scrollY > 300);
     }
 
+    // 阅读进度条
     const progressBar = safeGetElement('readingProgressBar');
     const postDetail = safeGetElement('postDetail');
-    
     if (!progressBar || !postDetail || postDetail.classList.contains('hidden')) {
         if (progressBar) progressBar.style.width = '0%';
         return;
@@ -366,128 +393,102 @@ function handleScroll() {
 
     const content = safeGetElement('postContent');
     if (!content) return;
-
     const totalHeight = content.scrollHeight - window.innerHeight;
     const scrolled = window.scrollY - postDetail.offsetTop;
     let progress = (scrolled / totalHeight) * 100;
-
-    if (progress < 0) progress = 0;
-    if (progress > 100) progress = 100;
-    
+    progress = Math.max(0, Math.min(100, progress));
     progressBar.style.width = `${progress}%`;
 }
 
 function enterReadingMode() {
-    const homeSection = safeGetElement('home');
-    const aboutSection = safeGetElement('about');
-    const profileSection = safeGetElement('profile');
-    const profilePostsSection = safeGetElement('profilePosts');
+    ['home', 'about', 'profile', 'profilePosts'].forEach(id => {
+        const el = safeGetElement(id);
+        if (el) el.style.display = 'none';
+    });
     const progressBar = safeGetElement('readingProgressBar');
-    
-    if (homeSection) homeSection.style.display = 'none';
-    if (aboutSection) aboutSection.style.display = 'none';
-    if (profileSection) profileSection.style.display = 'none';
-    if (profilePostsSection) profilePostsSection.style.display = 'none';
     if (progressBar) progressBar.style.opacity = '1';
 
+    // 初始化文章内功能
     generateTableOfContents();
     wrapCodeBlocks();
 }
 
 function exitReadingMode() {
-    const homeSection = safeGetElement('home');
-    const aboutSection = safeGetElement('about');
-    const profileSection = safeGetElement('profile');
-    const profilePostsSection = safeGetElement('profilePosts');
+    ['home', 'about', 'profile', 'profilePosts'].forEach(id => {
+        const el = safeGetElement(id);
+        if (el) el.style.display = 'block';
+    });
     const progressBar = safeGetElement('readingProgressBar');
-    const tocContainer = safeGetElement('toc-container');
-    
-    if (homeSection) homeSection.style.display = 'block';
-    if (aboutSection) aboutSection.style.display = 'block';
-    if (profileSection) profileSection.style.display = 'block';
-    if (profilePostsSection) profilePostsSection.style.display = 'block';
     if (progressBar) {
         progressBar.style.opacity = '0';
         progressBar.style.width = '0%';
     }
-    if (tocContainer) {
-        tocContainer.remove();
-    }
+    const toc = safeGetElement('toc-container');
+    if (toc) toc.remove();
 }
 
-// =======================
-// 文章目录 (TOC)
-// =======================
+// ======================= 文章目录 =======================
 function generateTableOfContents() {
-    const postContent = safeGetElement('postContent');
-    if (!postContent) return;
-
-    const headings = postContent.querySelectorAll('h2, h3');
+    const content = safeGetElement('postContent');
+    if (!content) return;
+    const headings = content.querySelectorAll('h2, h3');
     if (headings.length < 2) return;
 
-    const tocContainer = document.createElement('div');
-    tocContainer.id = 'toc-container';
-    tocContainer.className = 'toc-container';
-    tocContainer.innerHTML = '<h3><i class="fas fa-list"></i> 目录</h3><ul class="toc-list"></ul>';
-    const tocList = tocContainer.querySelector('.toc-list');
+    const toc = document.createElement('div');
+    toc.id = 'toc-container';
+    toc.className = 'toc-container';
+    toc.innerHTML = '<h3><i class="fas fa-list"></i> 目录</h3><ul class="toc-list"></ul>';
+    const list = toc.querySelector('.toc-list');
 
     headings.forEach((heading, index) => {
         const id = `heading-${index}`;
         heading.id = id;
-        
-        const listItem = document.createElement('li');
-        listItem.className = `toc-${heading.tagName.toLowerCase()}`;
-        const link = document.createElement('a');
-        link.href = `#${id}`;
-        link.textContent = heading.textContent;
-        link.addEventListener('click', (e) => {
+        const li = document.createElement('li');
+        li.className = `toc-${heading.tagName.toLowerCase()}`;
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = heading.textContent;
+        a.addEventListener('click', (e) => {
             e.preventDefault();
-            smoothScrollTo(`#${id}`);
+            document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
         });
-        listItem.appendChild(link);
-        tocList.appendChild(listItem);
+        li.appendChild(a);
+        list.appendChild(li);
     });
 
-    postContent.prepend(tocContainer);
+    content.prepend(toc);
 }
 
-// =======================
-// 代码块一键复制
-// =======================
+// ======================= 代码复制 =======================
 function wrapCodeBlocks() {
-    const codeBlocks = document.querySelectorAll('.post-content pre');
-    codeBlocks.forEach(block => {
+    document.querySelectorAll('.post-content pre').forEach(block => {
         if (block.parentElement.classList.contains('code-block-wrapper')) return;
-
         const wrapper = document.createElement('div');
         wrapper.className = 'code-block-wrapper';
         block.parentNode.insertBefore(wrapper, block);
         wrapper.appendChild(block);
 
-        const copyButton = document.createElement('button');
-        copyButton.className = 'copy-code-btn';
-        copyButton.textContent = '复制';
-        copyButton.addEventListener('click', async () => {
-            const code = block.querySelector('code').innerText;
+        const btn = document.createElement('button');
+        btn.className = 'copy-code-btn';
+        btn.textContent = '复制';
+        btn.addEventListener('click', async () => {
             try {
-                await navigator.clipboard.writeText(code);
-                copyButton.textContent = '成功!';
-                copyButton.classList.add('copied');
+                await navigator.clipboard.writeText(block.querySelector('code').innerText);
+                btn.textContent = '成功!';
+                btn.classList.add('copied');
                 setTimeout(() => {
-                    copyButton.textContent = '复制';
-                    copyButton.classList.remove('copied');
+                    btn.textContent = '复制';
+                    btn.classList.remove('copied');
                 }, 2000);
-            } catch (err) {
-                copyButton.textContent = '失败';
+            } catch (e) {
+                btn.textContent = '失败';
             }
         });
-        wrapper.appendChild(copyButton);
+        wrapper.appendChild(btn);
     });
 }
 
-// =======================
-// 回到顶部按钮
-// =======================
+// ======================= 回到顶部 =======================
 function createBackToTopButton() {
     if (document.querySelector('.back-to-top')) return;
     backToTopBtn = document.createElement('button');
