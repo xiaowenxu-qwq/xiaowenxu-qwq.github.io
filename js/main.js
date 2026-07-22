@@ -9,48 +9,79 @@ let allPosts = [];
 let filteredPosts = [];
 const MAX_HISTORY = 5;
 
-// 安全地获取DOM元素，避免报错
+// ✅ 内存存储替代 LocalStorage（解决 file:// 协议问题）
+let memoryStorage = {
+    theme: null,
+    searchHistory: []
+};
+
+// 安全获取DOM元素
 const safeGetElement = (id) => document.getElementById(id);
 const searchInput = safeGetElement('searchInput');
 const searchClear = safeGetElement('searchClear');
 const searchHistory = safeGetElement('searchHistory');
 const searchHistoryList = safeGetElement('searchHistoryList');
-const clearHistoryBtn = safeGetElement('clearHistoryBtn');
+const clearHistoryBtn = safeGetElement('clearHistory');
 let backToTopBtn;
 
+// ✅ 检测是否支持 LocalStorage（用于主题持久化）
+function isLocalStorageSupported() {
+    try {
+        const testKey = '__test__';
+        localStorage.setItem(testKey, testKey);
+        localStorage.removeItem(testKey);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+const canUseLocalStorage = isLocalStorageSupported();
+
 // =======================
-// 初始化（增加容错 + 支持个人中心）
+// 初始化
 // =======================
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Blog initialized');
+    console.log('📄 Current page:', window.location.pathname);
+    console.log('🔧 LocalStorage supported:', canUseLocalStorage);
+    
     allPosts = posts || [];
     filteredPosts = [...allPosts];
-
-    // ✅ 支持主页和个人中心的双容器渲染
+    
+    // 渲染文章列表
     const postsContainer = safeGetElement('postsContainer');
     const profilePostsContainer = safeGetElement('profilePostsContainer');
-
+    
     if (postsContainer) {
+        console.log('🏠 Rendering posts on homepage');
         renderPosts(filteredPosts, 'postsContainer');
     }
-
+    
     if (profilePostsContainer) {
+        console.log('👤 Rendering posts on profile page');
         renderPosts(filteredPosts, 'profilePostsContainer');
     }
-
+    
     setupEventListeners();
     initializeTheme();
-    hljs.highlightAll();
     
-    // 只有在主站才加载搜索历史和创建进度条
-    if (searchInput) {
+    // 延迟高亮，确保DOM已渲染
+    setTimeout(() => {
+        hljs.highlightAll();
+    }, 100);
+    
+    // 只在主站加载搜索历史
+    if (searchInput && canUseLocalStorage) {
         loadSearchHistory();
     }
+    
     createProgressBar();
     createBackToTopButton();
 });
 
 // =======================
-// 事件监听器（全面容错）
+// 事件监听器
 // =======================
 function setupEventListeners() {
     const postsContainer = safeGetElement('postsContainer');
@@ -58,7 +89,7 @@ function setupEventListeners() {
     const backBtn = safeGetElement('backBtn');
     const themeToggle = safeGetElement('themeToggle');
     
-    // ✅ 支持主页和个人中心的文章点击
+    // 文章点击（支持双容器）
     [postsContainer, profilePostsContainer].forEach(container => {
         if (container) {
             container.addEventListener('click', function(e) {
@@ -83,8 +114,8 @@ function setupEventListeners() {
         themeToggle.addEventListener('click', toggleTheme);
     }
     
-    // --- 搜索相关（仅在元素存在时绑定）---
-    if (searchInput) {
+    // 搜索相关（仅在支持且存在时绑定）
+    if (searchInput && canUseLocalStorage) {
         searchInput.addEventListener('input', handleSearchInput);
         searchInput.addEventListener('focus', () => {
             if (searchHistoryList && searchHistoryList.children.length > 0) {
@@ -111,7 +142,7 @@ function setupEventListeners() {
         });
     }
 
-    if (searchHistoryList) {
+    if (searchHistoryList && canUseLocalStorage) {
         searchHistoryList.addEventListener('click', (e) => {
             const item = e.target.closest('.search-history-item');
             if (item) {
@@ -124,24 +155,24 @@ function setupEventListeners() {
         });
     }
 
-    if (clearHistoryBtn) {
+    if (clearHistoryBtn && canUseLocalStorage) {
         clearHistoryBtn.addEventListener('click', clearSearchHistory);
     }
     
-    // --- 全局点击 & 滚动 ---
+    // 全局点击袋鼠特效
     document.addEventListener('click', (e) => {
         spawnKangaroos(e.clientX, e.clientY);
     });
 
     window.addEventListener('scroll', handleScroll);
 
-    // --- 侧边栏逻辑（核心修改：强制回首页） ---
+    // 侧边栏导航逻辑
     const sidebarLinks = document.querySelectorAll('.sidebar-link');
     sidebarLinks.forEach(link => {
         link.addEventListener('click', function(e) {
             const targetHref = this.getAttribute('href');
             
-            // 情况1：在个人中心页面，点击任何侧边栏链接都强制回主站首页
+            // 在个人中心页面，强制回主站
             if (window.location.pathname.includes('profile.html')) {
                 if (targetHref.includes('#home') || targetHref === 'index.html') {
                     window.location.href = 'index.html';
@@ -151,7 +182,7 @@ function setupEventListeners() {
                 return;
             }
 
-            // 情况2：在主站
+            // 主站逻辑
             if (targetHref.includes('#home') || targetHref === 'index.html' || targetHref === '#home') {
                 e.preventDefault();
                 exitReadingMode();
@@ -165,7 +196,6 @@ function setupEventListeners() {
                 return;
             }
 
-            // 情况3：在主站点击其他链接
             const postDetail = safeGetElement('postDetail');
             if (postDetail && !postDetail.classList.contains('hidden')) {
                 e.preventDefault();
@@ -188,7 +218,7 @@ function setupEventListeners() {
 }
 
 // =======================
-// 搜索函数（支持双容器过滤）
+// 搜索函数
 // =======================
 function handleSearchInput() {
     if (!searchInput) return;
@@ -211,7 +241,6 @@ function filterPosts(keyword) {
         );
     }
     
-    // ✅ 同时更新主页和个人中心的文章列表
     const postsContainer = safeGetElement('postsContainer');
     const profilePostsContainer = safeGetElement('profilePostsContainer');
     
@@ -223,7 +252,6 @@ function filterPosts(keyword) {
         renderPosts(filteredPosts, 'profilePostsContainer');
     }
     
-    // ✅ 同时处理两个页面的“无结果”提示
     if (noResults) {
         if (filteredPosts.length === 0 && keyword) {
             noResults.classList.remove('hidden');
@@ -248,37 +276,57 @@ function toggleClearButton(keyword) {
 }
 
 // =======================
-// 搜索历史 (LocalStorage)
+// 搜索历史（内存存储版）
 // =======================
 function loadSearchHistory() {
-    const history = JSON.parse(localStorage.getItem('blogSearchHistory') || '[]');
-    renderSearchHistory(history);
+    if (!canUseLocalStorage) return;
+    
+    try {
+        const history = JSON.parse(localStorage.getItem('blogSearchHistory') || '[]');
+        renderSearchHistory(history);
+    } catch (e) {
+        console.warn('Failed to load search history:', e);
+        renderSearchHistory([]);
+    }
 }
 
 function saveSearchHistory(keyword) {
-    if (!keyword || !searchHistoryList) return;
-    let history = JSON.parse(localStorage.getItem('blogSearchHistory') || '[]');
-    history = history.filter(item => item !== keyword);
-    history.unshift(keyword);
-    if (history.length > MAX_HISTORY) {
-        history = history.slice(0, MAX_HISTORY);
+    if (!canUseLocalStorage || !keyword || !searchHistoryList) return;
+    
+    try {
+        let history = JSON.parse(localStorage.getItem('blogSearchHistory') || '[]');
+        history = history.filter(item => item !== keyword);
+        history.unshift(keyword);
+        if (history.length > MAX_HISTORY) {
+            history = history.slice(0, MAX_HISTORY);
+        }
+        localStorage.setItem('blogSearchHistory', JSON.stringify(history));
+        renderSearchHistory(history);
+    } catch (e) {
+        console.warn('Failed to save search history:', e);
     }
-    localStorage.setItem('blogSearchHistory', JSON.stringify(history));
-    renderSearchHistory(history);
 }
 
 function clearSearchHistory() {
-    localStorage.removeItem('blogSearchHistory');
-    renderSearchHistory([]);
+    if (!canUseLocalStorage) return;
+    
+    try {
+        localStorage.removeItem('blogSearchHistory');
+        renderSearchHistory([]);
+    } catch (e) {
+        console.warn('Failed to clear search history:', e);
+    }
 }
 
 function renderSearchHistory(history) {
     if (!searchHistoryList) return;
     searchHistoryList.innerHTML = '';
+    
     if (history.length === 0) {
         searchHistory?.classList.remove('visible');
         return;
     }
+    
     history.forEach(item => {
         const li = document.createElement('li');
         li.className = 'search-history-item';
