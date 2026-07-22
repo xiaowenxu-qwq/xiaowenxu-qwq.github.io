@@ -82,9 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ======================= 页面路由（核心渲染逻辑） =======================
 function handlePageRouting() {
+    // ✅ 修复：优先通过 DOM 元素判断页面类型，更可靠
+    const hasProfileElement = !!document.getElementById('profile');
     const path = window.location.pathname;
-    const isProfilePage = path.includes('profile.html');
-    const isHomePage = path.includes('index.html') || path === '/' || path.endsWith('/');
+    const isProfilePage = hasProfileElement || path.includes('profile.html');
+    const isHomePage = !isProfilePage;  // 非个人中心即为主页
 
     console.log(`🔀 路由分发：主页=${isHomePage}，个人中心=${isProfilePage}`);
 
@@ -102,20 +104,18 @@ function handlePageRouting() {
     // 2. 个人中心强制渲染所有文章（不走过滤逻辑）
     if (isProfilePage) {
         const profileContainer = safeGetElement('profilePostsContainer');
-        
         if (!profileContainer) {
             console.error('❌ 致命错误：未找到个人中心文章容器 #profilePostsContainer');
-            console.error('请检查profile.html中是否存在 <div id="profilePostsContainer">');
             return;
         }
 
         if (allPosts.length === 0) {
-            console.warn('⚠️ 文章数据为空，请检查js/data/posts.js配置');
+            console.warn('⚠️ 文章数据为空，请检查 js/data/posts.js 配置');
             profileContainer.innerHTML = `
                 <div class="no-results">
                     <i class="fas fa-book-open"></i>
                     <p>暂无文章内容</p>
-                    <span class="no-results-hint">请检查js/data/posts.js配置</span>
+                    <span class="no-results-hint">请检查 js/data/posts.js 配置</span>
                 </div>
             `;
             return;
@@ -126,7 +126,7 @@ function handlePageRouting() {
         console.log('✅ 个人中心文章渲染完成');
     }
 
-    // 3. 主页渲染文章
+    // 3. 主页渲染文章（受搜索过滤影响）
     if (isHomePage) {
         const homeContainer = safeGetElement('postsContainer');
         if (homeContainer) {
