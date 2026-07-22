@@ -1,13 +1,13 @@
 /**
- * 主入口文件 - 修复版
- * 修复问题：
- * 1. 本地 file:// 协议下 LocalStorage 访问报错
- * 2. 个人中心文章列表不渲染问题
- * 3. 路径引用错误
- * 4. 渲染逻辑规范化（不再硬编码 HTML）
+ * 主入口文件 - 最终修复版
+ * 修复清单：
+ * 1. ✅ 模块化导入posts数据，解决作用域报错
+ * 2. ✅ 兼容file://协议的LocalStorage禁用问题
+ * 3. ✅ 个人中心文章列表强制渲染逻辑
+ * 4. ✅ 完善错误处理和调试日志
  */
 
-// ======================= 依赖导入（路径严格校验） =======================
+// ✅ 核心修复：从data目录导入posts数据（路径相对于当前main.js所在目录）
 import { posts } from './data/posts.js';
 import { renderPosts } from './components/postsList.js';
 import { showPostDetail, hidePostDetail } from './components/postDetail.js';
@@ -20,20 +20,17 @@ let allPosts = [];
 let filteredPosts = [];
 const MAX_HISTORY = 5;
 
-// ✅ 内存存储兜底（解决 file:// 协议 LocalStorage 禁用问题）
+// ✅ 内存存储兜底（解决file://协议下LocalStorage不可用问题）
 let memoryStorage = {
     theme: null,
     searchHistory: []
 };
 
 // ======================= 工具函数 =======================
-/**
- * 安全获取 DOM 元素（避免空指针报错）
- */
 const safeGetElement = (id) => document.getElementById(id);
 
 /**
- * 检测浏览器是否支持 LocalStorage（兼容 file:// 协议）
+ * 检测浏览器是否支持LocalStorage
  */
 function isLocalStorageSupported() {
     try {
@@ -42,13 +39,13 @@ function isLocalStorageSupported() {
         localStorage.removeItem(testKey);
         return true;
     } catch (e) {
-        console.warn('⚠️ LocalStorage 不可用，将使用内存存储');
+        console.warn('⚠️ LocalStorage不可用，已切换为内存存储模式');
         return false;
     }
 }
 const canUseLocalStorage = isLocalStorageSupported();
 
-// DOM 元素缓存（避免重复查询）
+// DOM元素缓存
 const searchInput = safeGetElement('searchInput');
 const searchClear = safeGetElement('searchClear');
 const searchHistory = safeGetElement('searchHistory');
@@ -60,18 +57,18 @@ let backToTopBtn = null;
 document.addEventListener('DOMContentLoaded', () => {
     console.log('%c✅ 博客初始化完成', 'color: #10b981; font-weight: bold;');
     console.log(`📄 当前页面：${window.location.pathname}`);
-    console.log(`🔧 LocalStorage 支持：${canUseLocalStorage}`);
+    console.log(`🔧 LocalStorage支持：${canUseLocalStorage}`);
+    console.log(`📚 加载文章总数：${posts?.length || 0}`);
 
     // 初始化文章数据
     allPosts = Array.isArray(posts) ? [...posts] : [];
     filteredPosts = [...allPosts];
-    console.log(`📚 加载文章总数：${allPosts.length}`);
 
     // 初始化基础功能
     initializeTheme();
     setupEventListeners();
     
-    // 延迟高亮代码块（确保 DOM 已渲染）
+    // 延迟高亮代码块（确保DOM已渲染）
     requestAnimationFrame(() => hljs.highlightAll());
 
     // 页面路由分发
@@ -83,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (canUseLocalStorage) loadSearchHistory();
 });
 
-// ======================= 页面路由（核心修复点） =======================
+// ======================= 页面路由（核心渲染逻辑） =======================
 function handlePageRouting() {
     const path = window.location.pathname;
     const isProfilePage = path.includes('profile.html');
@@ -108,24 +105,23 @@ function handlePageRouting() {
         
         if (!profileContainer) {
             console.error('❌ 致命错误：未找到个人中心文章容器 #profilePostsContainer');
-            console.error('请检查 profile.html 中是否存在 <div id="profilePostsContainer">');
+            console.error('请检查profile.html中是否存在 <div id="profilePostsContainer">');
             return;
         }
 
         if (allPosts.length === 0) {
-            console.warn('⚠️ 文章数据为空，请检查 data/posts.js 是否正确导出 posts');
+            console.warn('⚠️ 文章数据为空，请检查js/data/posts.js配置');
             profileContainer.innerHTML = `
                 <div class="no-results">
                     <i class="fas fa-book-open"></i>
                     <p>暂无文章内容</p>
-                    <span class="no-results-hint">请检查 data/posts.js 配置</span>
+                    <span class="no-results-hint">请检查js/data/posts.js配置</span>
                 </div>
             `;
             return;
         }
 
         console.log(`👤 开始渲染个人中心文章，数量：${allPosts.length}`);
-        // 调用标准渲染函数，保持样式和交互一致
         renderPosts(allPosts, 'profilePostsContainer');
         console.log('✅ 个人中心文章渲染完成');
     }
@@ -146,7 +142,7 @@ function setupEventListeners() {
     const containers = [
         safeGetElement('postsContainer'),
         safeGetElement('profilePostsContainer')
-    ].filter(Boolean); // 过滤不存在的容器
+    ].filter(Boolean);
 
     containers.forEach(container => {
         container.addEventListener('click', (e) => {
@@ -317,7 +313,7 @@ function toggleClearButton(keyword) {
     }
 }
 
-// ======================= 搜索历史（兼容 LocalStorage 禁用） =======================
+// ======================= 搜索历史（兼容LocalStorage禁用） =======================
 function loadSearchHistory() {
     if (!canUseLocalStorage) return;
     try {
@@ -408,7 +404,6 @@ function enterReadingMode() {
     const progressBar = safeGetElement('readingProgressBar');
     if (progressBar) progressBar.style.opacity = '1';
 
-    // 初始化文章内功能
     generateTableOfContents();
     wrapCodeBlocks();
 }
