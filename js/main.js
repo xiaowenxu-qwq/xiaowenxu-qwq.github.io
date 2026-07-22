@@ -15,19 +15,26 @@ const searchInput = safeGetElement('searchInput');
 const searchClear = safeGetElement('searchClear');
 const searchHistory = safeGetElement('searchHistory');
 const searchHistoryList = safeGetElement('searchHistoryList');
-const clearHistoryBtn = safeGetElement('clearHistory');
+const clearHistoryBtn = safeGetElement('clearHistoryBtn');
 let backToTopBtn;
 
 // =======================
-// 初始化（增加容错）
+// 初始化（增加容错 + 支持个人中心）
 // =======================
 document.addEventListener('DOMContentLoaded', function() {
-    // 只有在主站才有postsContainer
+    allPosts = posts || [];
+    filteredPosts = [...allPosts];
+
+    // ✅ 支持主页和个人中心的双容器渲染
     const postsContainer = safeGetElement('postsContainer');
+    const profilePostsContainer = safeGetElement('profilePostsContainer');
+
     if (postsContainer) {
-        allPosts = posts || [];
-        filteredPosts = [...allPosts];
-        renderPosts(filteredPosts);
+        renderPosts(filteredPosts, 'postsContainer');
+    }
+
+    if (profilePostsContainer) {
+        renderPosts(filteredPosts, 'profilePostsContainer');
     }
 
     setupEventListeners();
@@ -47,19 +54,23 @@ document.addEventListener('DOMContentLoaded', function() {
 // =======================
 function setupEventListeners() {
     const postsContainer = safeGetElement('postsContainer');
+    const profilePostsContainer = safeGetElement('profilePostsContainer');
     const backBtn = safeGetElement('backBtn');
     const themeToggle = safeGetElement('themeToggle');
     
-    if (postsContainer) {
-        postsContainer.addEventListener('click', function(e) {
-            const postCard = e.target.closest('.post-card');
-            if (postCard) {
-                const postId = parseInt(postCard.dataset.id);
-                showPostDetail(postId, allPosts);
-                enterReadingMode();
-            }
-        });
-    }
+    // ✅ 支持主页和个人中心的文章点击
+    [postsContainer, profilePostsContainer].forEach(container => {
+        if (container) {
+            container.addEventListener('click', function(e) {
+                const postCard = e.target.closest('.post-card');
+                if (postCard) {
+                    const postId = parseInt(postCard.dataset.id);
+                    showPostDetail(postId, allPosts);
+                    enterReadingMode();
+                }
+            });
+        }
+    });
 
     if (backBtn) {
         backBtn.addEventListener('click', () => {
@@ -131,27 +142,21 @@ function setupEventListeners() {
             const targetHref = this.getAttribute('href');
             
             // 情况1：在个人中心页面，点击任何侧边栏链接都强制回主站首页
-            // 判断依据：当前URL包含 profile.html
             if (window.location.pathname.includes('profile.html')) {
-                // 如果是主页链接，直接跳转（不带锚点，确保是刷新时的状态）
                 if (targetHref.includes('#home') || targetHref === 'index.html') {
                     window.location.href = 'index.html';
                     return;
                 }
-                // 其他链接（文章、介绍）也跳回主站
                 window.location.href = targetHref;
                 return;
             }
 
             // 情况2：在主站
-            // 如果点击的是主页链接，强制回到刷新时的状态（隐藏文章详情，显示首页和介绍）
             if (targetHref.includes('#home') || targetHref === 'index.html' || targetHref === '#home') {
                 e.preventDefault();
-                exitReadingMode(); // 确保退出阅读模式
-                hidePostDetail(); // 确保隐藏文章详情
-                // 滚动到顶部
+                exitReadingMode();
+                hidePostDetail();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-                // 重置搜索框
                 if (searchInput) {
                     searchInput.value = '';
                     filterPosts('');
@@ -160,14 +165,12 @@ function setupEventListeners() {
                 return;
             }
 
-            // 情况3：在主站点击其他链接（文章、介绍）
-            // 如果在阅读模式，先退出
+            // 情况3：在主站点击其他链接
             const postDetail = safeGetElement('postDetail');
             if (postDetail && !postDetail.classList.contains('hidden')) {
                 e.preventDefault();
                 exitReadingMode();
                 hidePostDetail();
-                // 延迟滚动，确保DOM已更新
                 setTimeout(() => {
                     if (targetHref.startsWith('#') && document.querySelector(targetHref)) {
                         smoothScrollTo(targetHref);
@@ -176,7 +179,6 @@ function setupEventListeners() {
                 return;
             }
 
-            // 正常情况下的锚点跳转
             if (targetHref.startsWith('#') && document.querySelector(targetHref)) {
                 e.preventDefault();
                 smoothScrollTo(targetHref);
@@ -186,7 +188,7 @@ function setupEventListeners() {
 }
 
 // =======================
-// 搜索函数（容错版）
+// 搜索函数（支持双容器过滤）
 // =======================
 function handleSearchInput() {
     if (!searchInput) return;
@@ -197,6 +199,7 @@ function handleSearchInput() {
 
 function filterPosts(keyword) {
     const noResults = safeGetElement('noResults');
+    const profileNoResults = safeGetElement('profileNoResults');
     
     if (!keyword) {
         filteredPosts = [...allPosts];
@@ -208,13 +211,32 @@ function filterPosts(keyword) {
         );
     }
     
-    renderPosts(filteredPosts);
+    // ✅ 同时更新主页和个人中心的文章列表
+    const postsContainer = safeGetElement('postsContainer');
+    const profilePostsContainer = safeGetElement('profilePostsContainer');
     
+    if (postsContainer) {
+        renderPosts(filteredPosts, 'postsContainer');
+    }
+    
+    if (profilePostsContainer) {
+        renderPosts(filteredPosts, 'profilePostsContainer');
+    }
+    
+    // ✅ 同时处理两个页面的“无结果”提示
     if (noResults) {
         if (filteredPosts.length === 0 && keyword) {
             noResults.classList.remove('hidden');
         } else {
             noResults.classList.add('hidden');
+        }
+    }
+    
+    if (profileNoResults) {
+        if (filteredPosts.length === 0 && keyword) {
+            profileNoResults.classList.remove('hidden');
+        } else {
+            profileNoResults.classList.add('hidden');
         }
     }
 }
@@ -270,7 +292,6 @@ function renderSearchHistory(history) {
 // 阅读模式 & 进度条 & TOC
 // =======================
 function createProgressBar() {
-    // 防止重复创建
     if (document.getElementById('readingProgressBar')) return;
     const progressBar = document.createElement('div');
     progressBar.className = 'reading-progress-bar';
@@ -279,7 +300,6 @@ function createProgressBar() {
 }
 
 function handleScroll() {
-    // 回到顶部按钮
     if (backToTopBtn) {
         if (window.scrollY > 300) {
             backToTopBtn.classList.add('visible');
@@ -288,7 +308,6 @@ function handleScroll() {
         }
     }
 
-    // 阅读进度条
     const progressBar = safeGetElement('readingProgressBar');
     const postDetail = safeGetElement('postDetail');
     
@@ -313,10 +332,14 @@ function handleScroll() {
 function enterReadingMode() {
     const homeSection = safeGetElement('home');
     const aboutSection = safeGetElement('about');
+    const profileSection = safeGetElement('profile');
+    const profilePostsSection = safeGetElement('profilePosts');
     const progressBar = safeGetElement('readingProgressBar');
     
     if (homeSection) homeSection.style.display = 'none';
     if (aboutSection) aboutSection.style.display = 'none';
+    if (profileSection) profileSection.style.display = 'none';
+    if (profilePostsSection) profilePostsSection.style.display = 'none';
     if (progressBar) progressBar.style.opacity = '1';
 
     generateTableOfContents();
@@ -326,11 +349,15 @@ function enterReadingMode() {
 function exitReadingMode() {
     const homeSection = safeGetElement('home');
     const aboutSection = safeGetElement('about');
+    const profileSection = safeGetElement('profile');
+    const profilePostsSection = safeGetElement('profilePosts');
     const progressBar = safeGetElement('readingProgressBar');
     const tocContainer = safeGetElement('toc-container');
     
     if (homeSection) homeSection.style.display = 'block';
     if (aboutSection) aboutSection.style.display = 'block';
+    if (profileSection) profileSection.style.display = 'block';
+    if (profilePostsSection) profilePostsSection.style.display = 'block';
     if (progressBar) {
         progressBar.style.opacity = '0';
         progressBar.style.width = '0%';
@@ -414,7 +441,6 @@ function wrapCodeBlocks() {
 // 回到顶部按钮
 // =======================
 function createBackToTopButton() {
-    // 防止重复创建
     if (document.querySelector('.back-to-top')) return;
     backToTopBtn = document.createElement('button');
     backToTopBtn.className = 'back-to-top';

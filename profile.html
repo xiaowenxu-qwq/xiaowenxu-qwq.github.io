@@ -94,6 +94,18 @@
                 </div>
             </div>
         </section>
+
+        <!-- ✅ 新增：个人中心文章列表区域 -->
+        <section id="profilePosts" class="posts-section">
+            <h2><i class="fas fa-list-alt"></i> 我的文章</h2>
+            <!-- 无搜索结果提示（个人中心也复用这个逻辑） -->
+            <div id="profileNoResults" class="no-results hidden">
+                <i class="fas fa-search"></i>
+                <p>未找到匹配的文章</p>
+                <span class="no-results-hint">尝试使用其他关键词</span>
+            </div>
+            <div class="posts-grid" id="profilePostsContainer"></div>
+        </section>
     </main>
 
     <footer class="footer">
