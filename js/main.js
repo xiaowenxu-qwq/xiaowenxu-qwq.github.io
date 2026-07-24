@@ -1,13 +1,8 @@
 /**
- * 主入口文件 - 最终修复版
- * 修复清单：
- * 1. ✅ 模块化导入posts数据，解决作用域报错
- * 2. ✅ 兼容file://协议的LocalStorage禁用问题
- * 3. ✅ 个人中心文章列表强制渲染逻辑
- * 4. ✅ 完善错误处理和调试日志
+ * 主入口文件 - 强力修复版
+ * 针对个人中心渲染问题提供双重保障
  */
 
-// ✅ 核心修复：从data目录导入posts数据（路径相对于当前main.js所在目录）
 import { posts } from './data/posts.js';
 import { renderPosts } from './components/postsList.js';
 import { showPostDetail, hidePostDetail } from './components/postDetail.js';
@@ -19,33 +14,23 @@ import { smoothScrollTo } from './utils/helpers.js';
 let allPosts = [];
 let filteredPosts = [];
 const MAX_HISTORY = 5;
-
-// ✅ 内存存储兜底（解决file://协议下LocalStorage不可用问题）
-let memoryStorage = {
-    theme: null,
-    searchHistory: []
-};
+let memoryStorage = { theme: null, searchHistory: [] };
 
 // ======================= 工具函数 =======================
 const safeGetElement = (id) => document.getElementById(id);
 
-/**
- * 检测浏览器是否支持LocalStorage
- */
 function isLocalStorageSupported() {
     try {
-        const testKey = '__blog_test__';
-        localStorage.setItem(testKey, testKey);
-        localStorage.removeItem(testKey);
+        localStorage.setItem('__test__', '1');
+        localStorage.removeItem('__test__');
         return true;
-    } catch (e) {
-        console.warn('⚠️ LocalStorage不可用，已切换为内存存储模式');
+    } catch {
         return false;
     }
 }
 const canUseLocalStorage = isLocalStorageSupported();
 
-// DOM元素缓存
+// ======================= DOM 缓存 =======================
 const searchInput = safeGetElement('searchInput');
 const searchClear = safeGetElement('searchClear');
 const searchHistory = safeGetElement('searchHistory');
@@ -53,14 +38,13 @@ const searchHistoryList = safeGetElement('searchHistoryList');
 const clearHistoryBtn = safeGetElement('clearHistory');
 let backToTopBtn = null;
 
-// ======================= 初始化逻辑 =======================
+// ======================= 初始化 =======================
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('%c✅ 博客初始化完成', 'color: #10b981; font-weight: bold;');
-    console.log(`📄 当前页面：${window.location.pathname}`);
-    console.log(`🔧 LocalStorage支持：${canUseLocalStorage}`);
-    console.log(`📚 加载文章总数：${posts?.length || 0}`);
+    console.log('🚀 博客初始化开始...');
+    console.log('📍 当前路径:', window.location.pathname);
+    console.log('📦 文章数据:', posts?.length || 0, '篇');
 
-    // 初始化文章数据
+    // 赋值数据
     allPosts = Array.isArray(posts) ? [...posts] : [];
     filteredPosts = [...allPosts];
 
@@ -68,29 +52,30 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeTheme();
     setupEventListeners();
     
-    // 延迟高亮代码块（确保DOM已渲染）
+    // 高亮代码
     requestAnimationFrame(() => hljs.highlightAll());
 
-    // 页面路由分发
-    handlePageRouting();
+    // ⭐ 核心修复：统一渲染调度
+    forceRenderAllPages();
 
-    // 初始化通用组件
+    // 通用组件
     createProgressBar();
     createBackToTopButton();
     if (canUseLocalStorage) loadSearchHistory();
+
+    console.log('✅ 初始化完成');
 });
 
-// ======================= 页面路由（核心渲染逻辑） =======================
-function handlePageRouting() {
-    // ✅ 修复：优先通过 DOM 元素判断页面类型，更可靠
+// ======================= 强制渲染（核心修复） =======================
+function forceRenderAllPages() {
+    // 判断是否为个人中心页：检查 DOM 中是否存在 profile 元素
     const hasProfileElement = !!document.getElementById('profile');
-    const path = window.location.pathname;
-    const isProfilePage = hasProfileElement || path.includes('profile.html');
-    const isHomePage = !isProfilePage;  // 非个人中心即为主页
+    const isProfilePage = hasProfileElement || window.location.pathname.includes('profile.html');
+    const isHomePage = !isProfilePage;
 
-    console.log(`🔀 路由分发：主页=${isHomePage}，个人中心=${isProfilePage}`);
+    console.log(`🔀 页面类型：${isProfilePage ? '个人中心' : '主页'}`);
 
-    // 1. 控制页面区块显示/隐藏
+    // --- 显示/隐藏区块 ---
     const homeSection = safeGetElement('home');
     const aboutSection = safeGetElement('about');
     const profileSection = safeGetElement('profile');
@@ -101,55 +86,41 @@ function handlePageRouting() {
     if (profileSection) profileSection.style.display = isProfilePage ? 'block' : 'none';
     if (profilePostsSection) profilePostsSection.style.display = isProfilePage ? 'block' : 'none';
 
-    // 2. 个人中心强制渲染所有文章（不走过滤逻辑）
+    // --- 渲染文章 ---
     if (isProfilePage) {
-        const profileContainer = safeGetElement('profilePostsContainer');
-        if (!profileContainer) {
-            console.error('❌ 致命错误：未找到个人中心文章容器 #profilePostsContainer');
+        const container = safeGetElement('profilePostsContainer');
+        if (!container) {
+            console.error('❌ 个人中心容器 #profilePostsContainer 不存在！请检查 profile.html');
             return;
         }
-
-        if (allPosts.length === 0) {
-            console.warn('⚠️ 文章数据为空，请检查 js/data/posts.js 配置');
-            profileContainer.innerHTML = `
-                <div class="no-results">
-                    <i class="fas fa-book-open"></i>
-                    <p>暂无文章内容</p>
-                    <span class="no-results-hint">请检查 js/data/posts.js 配置</span>
-                </div>
-            `;
-            return;
-        }
-
-        console.log(`👤 开始渲染个人中心文章，数量：${allPosts.length}`);
+        console.log('👤 渲染个人中心，文章数:', allPosts.length);
         renderPosts(allPosts, 'profilePostsContainer');
-        console.log('✅ 个人中心文章渲染完成');
-    }
-
-    // 3. 主页渲染文章（受搜索过滤影响）
-    if (isHomePage) {
-        const homeContainer = safeGetElement('postsContainer');
-        if (homeContainer) {
-            console.log(`🏠 开始渲染主页文章，数量：${filteredPosts.length}`);
+        // 同时隐藏无结果提示（如果有）
+        const noRes = safeGetElement('profileNoResults');
+        if (noRes) noRes.classList.add('hidden');
+    } else {
+        const container = safeGetElement('postsContainer');
+        if (container) {
+            console.log('🏠 渲染主页，文章数:', filteredPosts.length);
             renderPosts(filteredPosts, 'postsContainer');
         }
+        // 主页无结果提示由搜索逻辑控制
     }
 }
 
 // ======================= 事件监听 =======================
 function setupEventListeners() {
-    // 文章点击（同时支持主页和个人中心容器）
-    const containers = [
-        safeGetElement('postsContainer'),
-        safeGetElement('profilePostsContainer')
-    ].filter(Boolean);
+    // 文章点击（支持两个容器）
+    const containers = ['postsContainer', 'profilePostsContainer']
+        .map(id => safeGetElement(id))
+        .filter(Boolean);
 
     containers.forEach(container => {
         container.addEventListener('click', (e) => {
-            const postCard = e.target.closest('.post-card');
-            if (postCard) {
-                const postId = Number(postCard.dataset.id);
-                showPostDetail(postId, allPosts);
+            const card = e.target.closest('.post-card');
+            if (card) {
+                const id = Number(card.dataset.id);
+                showPostDetail(id, allPosts);
                 enterReadingMode();
             }
         });
@@ -168,7 +139,7 @@ function setupEventListeners() {
         });
     }
 
-    // 搜索相关（仅主站生效）
+    // 搜索逻辑（仅主页）
     if (searchInput && canUseLocalStorage) {
         searchInput.addEventListener('input', handleSearchInput);
         searchInput.addEventListener('focus', () => {
@@ -187,7 +158,6 @@ function setupEventListeners() {
         });
     }
 
-    // 搜索清除按钮
     if (searchClear) {
         searchClear.addEventListener('click', () => {
             if (searchInput) searchInput.value = '';
@@ -196,7 +166,6 @@ function setupEventListeners() {
         });
     }
 
-    // 搜索历史点击
     if (searchHistoryList && canUseLocalStorage) {
         searchHistoryList.addEventListener('click', (e) => {
             const item = e.target.closest('.search-history-item');
@@ -210,33 +179,30 @@ function setupEventListeners() {
         });
     }
 
-    // 清空搜索历史
     if (clearHistoryBtn && canUseLocalStorage) {
         clearHistoryBtn.addEventListener('click', clearSearchHistory);
     }
 
-    // 全局袋鼠特效
+    // 袋鼠特效
     document.addEventListener('click', (e) => {
         spawnKangaroos(e.clientX, e.clientY);
     });
 
-    // 滚动监听
+    // 滚动
     window.addEventListener('scroll', handleScroll);
 
-    // 侧边栏导航逻辑（兼容个人中心强制回主页）
+    // 侧边栏导航（统一处理）
     document.querySelectorAll('.sidebar-link').forEach(link => {
         link.addEventListener('click', (e) => {
-            const targetHref = link.getAttribute('href');
-
-            // 个人中心点击任何链接都强制回主站
+            const href = link.getAttribute('href');
+            // 个人中心内点击任何链接，跳转到主页
             if (window.location.pathname.includes('profile.html')) {
                 e.preventDefault();
-                window.location.href = targetHref.startsWith('#') ? 'index.html' : targetHref;
+                window.location.href = href.startsWith('#') ? 'index.html' : href;
                 return;
             }
-
-            // 主站首页链接逻辑
-            if (targetHref.includes('#home') || targetHref === 'index.html' || targetHref === '#home') {
+            // 主页内点击“主页”或锚点
+            if (href.includes('#home') || href === 'index.html' || href === '#home') {
                 e.preventDefault();
                 exitReadingMode();
                 hidePostDetail();
@@ -248,33 +214,29 @@ function setupEventListeners() {
                 }
                 return;
             }
-
-            // 阅读模式下点击锚点
+            // 阅读模式下的锚点
             const postDetail = safeGetElement('postDetail');
             if (postDetail && !postDetail.classList.contains('hidden')) {
                 e.preventDefault();
                 exitReadingMode();
                 hidePostDetail();
                 setTimeout(() => {
-                    if (targetHref.startsWith('#')) {
-                        const target = document.querySelector(targetHref);
-                        target?.scrollIntoView({ behavior: 'smooth' });
+                    if (href.startsWith('#')) {
+                        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
                     }
                 }, 100);
                 return;
             }
-
-            // 普通锚点跳转
-            if (targetHref.startsWith('#')) {
+            // 普通锚点
+            if (href.startsWith('#')) {
                 e.preventDefault();
-                const target = document.querySelector(targetHref);
-                target?.scrollIntoView({ behavior: 'smooth' });
+                document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
 }
 
-// ======================= 搜索逻辑 =======================
+// ======================= 搜索函数 =======================
 function handleSearchInput() {
     if (!searchInput) return;
     const keyword = searchInput.value.trim();
@@ -292,15 +254,14 @@ function filterPosts(keyword) {
             post.tags.some(tag => tag.toLowerCase().includes(keyword.toLowerCase()))
         );
     }
-
-    // 同时更新主页和个人中心的文章列表
+    // 主页容器
     const homeContainer = safeGetElement('postsContainer');
-    const profileContainer = safeGetElement('profilePostsContainer');
-    
     if (homeContainer) renderPosts(filteredPosts, 'postsContainer');
+    // 个人中心容器（搜索时也同步过滤，但个人中心通常不主动搜索，为保持一致性也更新）
+    const profileContainer = safeGetElement('profilePostsContainer');
     if (profileContainer) renderPosts(filteredPosts, 'profilePostsContainer');
 
-    // 更新无结果提示
+    // 无结果提示
     const noResults = safeGetElement('noResults');
     const profileNoResults = safeGetElement('profileNoResults');
     if (noResults) noResults.classList.toggle('hidden', !(filteredPosts.length === 0 && keyword));
@@ -313,15 +274,13 @@ function toggleClearButton(keyword) {
     }
 }
 
-// ======================= 搜索历史（兼容LocalStorage禁用） =======================
+// ======================= 搜索历史 =======================
 function loadSearchHistory() {
     if (!canUseLocalStorage) return;
     try {
         const history = JSON.parse(localStorage.getItem('blogSearchHistory') || '[]');
         renderSearchHistory(history);
-    } catch (e) {
-        console.warn('加载搜索历史失败：', e);
-    }
+    } catch {}
 }
 
 function saveSearchHistory(keyword) {
@@ -333,9 +292,7 @@ function saveSearchHistory(keyword) {
         if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
         localStorage.setItem('blogSearchHistory', JSON.stringify(history));
         renderSearchHistory(history);
-    } catch (e) {
-        console.warn('保存搜索历史失败：', e);
-    }
+    } catch {}
 }
 
 function clearSearchHistory() {
@@ -343,9 +300,7 @@ function clearSearchHistory() {
     try {
         localStorage.removeItem('blogSearchHistory');
         renderSearchHistory([]);
-    } catch (e) {
-        console.warn('清空搜索历史失败：', e);
-    }
+    } catch {}
 }
 
 function renderSearchHistory(history) {
@@ -364,7 +319,7 @@ function renderSearchHistory(history) {
     });
 }
 
-// ======================= 阅读模式 =======================
+// ======================= 阅读模式相关 =======================
 function createProgressBar() {
     if (document.getElementById('readingProgressBar')) return;
     const bar = document.createElement('div');
@@ -374,25 +329,20 @@ function createProgressBar() {
 }
 
 function handleScroll() {
-    // 回到顶部按钮
     if (backToTopBtn) {
         backToTopBtn.classList.toggle('visible', window.scrollY > 300);
     }
-
-    // 阅读进度条
     const progressBar = safeGetElement('readingProgressBar');
     const postDetail = safeGetElement('postDetail');
     if (!progressBar || !postDetail || postDetail.classList.contains('hidden')) {
         if (progressBar) progressBar.style.width = '0%';
         return;
     }
-
     const content = safeGetElement('postContent');
     if (!content) return;
     const totalHeight = content.scrollHeight - window.innerHeight;
     const scrolled = window.scrollY - postDetail.offsetTop;
-    let progress = (scrolled / totalHeight) * 100;
-    progress = Math.max(0, Math.min(100, progress));
+    let progress = Math.max(0, Math.min(100, (scrolled / totalHeight) * 100));
     progressBar.style.width = `${progress}%`;
 }
 
@@ -401,9 +351,8 @@ function enterReadingMode() {
         const el = safeGetElement(id);
         if (el) el.style.display = 'none';
     });
-    const progressBar = safeGetElement('readingProgressBar');
-    if (progressBar) progressBar.style.opacity = '1';
-
+    const bar = safeGetElement('readingProgressBar');
+    if (bar) bar.style.opacity = '1';
     generateTableOfContents();
     wrapCodeBlocks();
 }
@@ -413,28 +362,25 @@ function exitReadingMode() {
         const el = safeGetElement(id);
         if (el) el.style.display = 'block';
     });
-    const progressBar = safeGetElement('readingProgressBar');
-    if (progressBar) {
-        progressBar.style.opacity = '0';
-        progressBar.style.width = '0%';
+    const bar = safeGetElement('readingProgressBar');
+    if (bar) {
+        bar.style.opacity = '0';
+        bar.style.width = '0%';
     }
     const toc = safeGetElement('toc-container');
     if (toc) toc.remove();
 }
 
-// ======================= 文章目录 =======================
 function generateTableOfContents() {
     const content = safeGetElement('postContent');
     if (!content) return;
     const headings = content.querySelectorAll('h2, h3');
     if (headings.length < 2) return;
-
     const toc = document.createElement('div');
     toc.id = 'toc-container';
     toc.className = 'toc-container';
     toc.innerHTML = '<h3><i class="fas fa-list"></i> 目录</h3><ul class="toc-list"></ul>';
     const list = toc.querySelector('.toc-list');
-
     headings.forEach((heading, index) => {
         const id = `heading-${index}`;
         heading.id = id;
@@ -450,11 +396,9 @@ function generateTableOfContents() {
         li.appendChild(a);
         list.appendChild(li);
     });
-
     content.prepend(toc);
 }
 
-// ======================= 代码复制 =======================
 function wrapCodeBlocks() {
     document.querySelectorAll('.post-content pre').forEach(block => {
         if (block.parentElement.classList.contains('code-block-wrapper')) return;
@@ -462,20 +406,20 @@ function wrapCodeBlocks() {
         wrapper.className = 'code-block-wrapper';
         block.parentNode.insertBefore(wrapper, block);
         wrapper.appendChild(block);
-
         const btn = document.createElement('button');
         btn.className = 'copy-code-btn';
         btn.textContent = '复制';
         btn.addEventListener('click', async () => {
             try {
-                await navigator.clipboard.writeText(block.querySelector('code').innerText);
+                const code = block.querySelector('code')?.innerText || '';
+                await navigator.clipboard.writeText(code);
                 btn.textContent = '成功!';
                 btn.classList.add('copied');
                 setTimeout(() => {
                     btn.textContent = '复制';
                     btn.classList.remove('copied');
                 }, 2000);
-            } catch (e) {
+            } catch {
                 btn.textContent = '失败';
             }
         });
@@ -483,7 +427,6 @@ function wrapCodeBlocks() {
     });
 }
 
-// ======================= 回到顶部 =======================
 function createBackToTopButton() {
     if (document.querySelector('.back-to-top')) return;
     backToTopBtn = document.createElement('button');
