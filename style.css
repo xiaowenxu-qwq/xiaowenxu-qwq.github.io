@@ -3,7 +3,7 @@
     --secondary-color: #1e40af;
     --bg-color: #ffffff;
     --text-color: #1f2937;
-    --card-bg: rgba(248, 250, 252, 0.8); /* 半透明化：80%不透明度 */
+    --card-bg: rgba(248, 250, 252, 0.8);
     --border-color: rgba(229, 231, 235, 0.8);
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
@@ -14,7 +14,7 @@
     --secondary-color: #60a5fa;
     --bg-color: #0f172a;
     --text-color: #f1f5f9;
-    --card-bg: rgba(30, 41, 59, 0.8); /* 深色模式半透明 */
+    --card-bg: rgba(30, 41, 59, 0.8);
     --border-color: rgba(51, 65, 85, 0.8);
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
@@ -32,31 +32,27 @@ body {
     line-height: 1.6;
     transition: var(--transition);
     overflow-x: hidden;
-    /* 添加背景纹理增强半透明效果 */
     background-image: 
         radial-gradient(at 40% 20%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
         radial-gradient(at 80% 0%, rgba(96, 165, 250, 0.05) 0px, transparent 50%),
         radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
 }
 
-/* =======================
-   左侧边栏样式（不被半透明影响）
-   ======================= */
 .sidebar {
     position: fixed;
     left: 0;
-    top: 75px; /* 从顶栏底部开始，避免遮挡 */
+    top: 75px;
     height: calc(100vh - 75px);
     width: 60px;
     background-color: var(--card-bg);
     border-right: 1px solid var(--border-color);
     box-shadow: var(--shadow);
-    z-index: 99; /* 低于顶栏，避免遮挡搜索框 */
+    z-index: 99;
     transition: var(--transition);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(10px); /* 毛玻璃效果 */
+    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
 
@@ -139,9 +135,6 @@ body {
     50% { transform: translateY(-5px); }
 }
 
-/* =======================
-   导航栏样式（不被半透明影响）
-   ======================= */
 .header {
     background-color: var(--card-bg);
     backdrop-filter: blur(10px);
@@ -149,7 +142,7 @@ body {
     box-shadow: var(--shadow);
     position: sticky;
     top: 0;
-    z-index: 100; /* 高于侧边栏，确保搜索框可点击 */
+    z-index: 100;
 }
 
 .navbar {
@@ -174,7 +167,6 @@ body {
     flex-shrink: 0;
 }
 
-/* 新增：搜索框样式 */
 .search-box {
     flex: 1;
     max-width: 400px;
@@ -296,9 +288,6 @@ body {
     border-color: var(--primary-color);
 }
 
-/* =======================
-   主容器
-   ======================= */
 .container {
     max-width: calc(1200px - 60px);
     margin: 0 0 0 60px;
@@ -306,9 +295,6 @@ body {
     transition: var(--transition);
 }
 
-/* =======================
-   英雄区域（半透明化）
-   ======================= */
 .hero {
     text-align: center;
     padding: 4rem 0;
@@ -347,9 +333,6 @@ body {
     opacity: 0.9;
 }
 
-/* =======================
-   文章网格（半透明化核心）
-   ======================= */
 .posts-section h2 {
     margin-bottom: 2rem;
     display: flex;
@@ -357,7 +340,6 @@ body {
     gap: 0.5rem;
 }
 
-/* 无搜索结果提示 */
 .no-results {
     text-align: center;
     padding: 3rem 1rem;
@@ -388,22 +370,22 @@ body {
 }
 
 .post-card {
-    background-color: var(--card-bg); /* 使用半透明变量 */
+    background-color: var(--card-bg);
     border-radius: 0.75rem;
     overflow: hidden;
     box-shadow: var(--shadow);
     transition: var(--transition);
     cursor: pointer;
     border: 1px solid var(--border-color);
-    backdrop-filter: blur(10px); /* 毛玻璃效果 */
+    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    opacity: 0.8; /* 透明度80% */
+    opacity: 0.8;
 }
 
 .post-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    opacity: 1; /* 悬停时恢复不透明 */
+    opacity: 1;
 }
 
 .post-header {
@@ -427,7 +409,6 @@ body {
     gap: 0.5rem;
 }
 
-/* 最新文章标记样式 + 呼吸动画 */
 .post-date-badge {
     font-size: 0.7rem;
     padding: 0.2rem 0.6rem;
@@ -478,18 +459,15 @@ body {
     font-size: 0.75rem;
 }
 
-/* =======================
-   文章详情（半透明化）
-   ======================= */
 .post-detail {
-    background-color: var(--card-bg); /* 使用半透明变量 */
+    background-color: var(--card-bg);
     border-radius: 1rem;
     padding: 2rem;
     margin-bottom: 3rem;
     border: 1px solid var(--border-color);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    opacity: 0.8; /* 透明度80% */
+    opacity: 0.8;
 }
 
 .back-btn {
@@ -542,18 +520,15 @@ body {
     font-style: italic;
 }
 
-/* =======================
-   关于部分（半透明化）
-   ======================= */
 .about-section {
-    background-color: var(--card-bg); /* 使用半透明变量 */
+    background-color: var(--card-bg);
     border-radius: 1rem;
     padding: 2rem;
     margin-bottom: 3rem;
     border: 1px solid var(--border-color);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    opacity: 0.8; /* 透明度80% */
+    opacity: 0.8;
 }
 
 .about-content ul {
@@ -572,17 +547,14 @@ body {
     color: #10b981;
 }
 
-/* =======================
-   页脚（半透明化）
-   ======================= */
 .footer {
-    background-color: var(--card-bg); /* 使用半透明变量 */
+    background-color: var(--card-bg);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     text-align: center;
     padding: 2rem;
     border-top: 1px solid var(--border-color);
-    opacity: 0.8; /* 透明度80% */
+    opacity: 0.8;
 }
 
 .social-links {
@@ -602,14 +574,10 @@ body {
     color: var(--primary-color);
 }
 
-/* 工具类 */
 .hidden {
     display: none;
 }
 
-/* =======================
-   KaTeX 公式样式优化
-   ======================= */
 .katex {
     font-size: 1.1em;
 }
@@ -624,9 +592,6 @@ body {
     color: var(--text-color);
 }
 
-/* =======================
-   响应式设计
-   ======================= */
 @media (max-width: 768px) {
     .sidebar {
         top: 65px;
@@ -688,15 +653,14 @@ body {
         grid-template-columns: 1fr;
     }
 
-    /* 移动端最新标记适配 */
-    .post-date-badge.new {
-        margin-left: 0;
+    .search-history {
+        position: fixed;
+        top: 70px;
+        left: 5%;
+        width: 90%;
     }
 }
 
-/* =======================
-   袋鼠动画样式（四散版）
-   ======================= */
 .kangaroo {
     position: fixed;
     pointer-events: none;
@@ -721,7 +685,6 @@ body {
     }
 }
 
-/* 无障碍适配：减少动画 */
 @media (prefers-reduced-motion: reduce) {
     .post-date-badge.new {
         animation: none;
@@ -732,24 +695,18 @@ body {
     }
 }
 
-/* =======================
-   阅读进度条
-   ======================= */
 .reading-progress-bar {
     position: fixed;
-    top: 0; /* 固定在顶栏的最顶部边缘，如果觉得挡住字可以改成 75px */
+    top: 0;
     left: 0;
     height: 3px;
     background: linear-gradient(90deg, var(--primary-color), #8b5cf6);
     width: 0%;
-    z-index: 101; /* 比顶栏略高一点 */
+    z-index: 101;
     transition: width 0.1s ease-out;
     border-radius: 0 2px 2px 0;
 }
 
-/* =======================
-   搜索历史面板
-   ======================= */
 .search-history {
     position: absolute;
     top: calc(100% + 8px);
@@ -824,18 +781,6 @@ body {
     font-size: 0.8rem;
 }
 
-/* 移动端适配：搜索历史全宽 */
-@media (max-width: 768px) {
-    .search-history {
-        position: fixed;
-        top: 70px;
-        left: 5%;
-        width: 90%;
-    }
-}
-/* =======================
-   文章目录 (TOC)
-   ======================= */
 .toc-container {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -891,9 +836,6 @@ body {
     opacity: 0.8;
 }
 
-/* =======================
-   代码块复制按钮
-   ======================= */
 .code-block-wrapper {
     position: relative;
 }
@@ -910,7 +852,7 @@ body {
     cursor: pointer;
     font-size: 0.75rem;
     transition: var(--transition);
-    opacity: 0; /* 默认隐藏，悬停时显示 */
+    opacity: 0;
 }
 
 .code-block-wrapper:hover .copy-code-btn {
@@ -923,13 +865,10 @@ body {
 }
 
 .copy-code-btn.copied {
-    background-color: #10b981; /* 绿色成功提示 */
+    background-color: #10b981;
     color: white;
 }
 
-/* =======================
-   回到顶部按钮
-   ======================= */
 .back-to-top {
     position: fixed;
     bottom: 2rem;
@@ -964,12 +903,159 @@ body {
     transform: translateY(-5px);
 }
 
-/* 移动端适配 */
 @media (max-width: 768px) {
     .back-to-top {
         bottom: 1rem;
         right: 1rem;
         width: 40px;
         height: 40px;
+    }
+}
+
+/* ===== 新增：个人中心美化样式 ===== */
+.profile-card {
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: 0 8px 32px rgba(31,38,135,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 2rem;
+}
+.profile-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(31,38,135,0.15);
+}
+.profile-top {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+.avatar-wrap {
+    position: relative;
+}
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid rgba(255,255,255,0.6);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
+.online-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 18px;
+    height: 18px;
+    background: #34d399;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 0 10px rgba(52,211,153,0.5);
+}
+.profile-meta {
+    flex: 1;
+}
+.profile-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    margin: 0 0 0.5rem 0;
+}
+.profile-bio {
+    color: #6b7280;
+    margin: 0 0 1rem 0;
+    font-size: 0.95rem;
+}
+.profile-social {
+    display: flex;
+    gap: 1rem;
+}
+.profile-social a {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(99,102,241,0.1);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+.profile-social a:hover {
+    background: var(--primary-color);
+    color: #fff;
+    transform: translateY(-2px);
+}
+.profile-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+}
+.profile-stats .stat-item {
+    text-align: center;
+}
+.profile-stats .stat-num {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    transition: all 0.5s ease;
+}
+.profile-stats .stat-label {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+.profile-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+.action-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+.action-btn.primary {
+    background: var(--primary-color);
+    color: #fff;
+}
+.action-btn.primary:hover {
+    background: var(--secondary-color);
+    transform: scale(1.05);
+}
+.action-btn.secondary {
+    background: rgba(99,102,241,0.1);
+    color: var(--primary-color);
+}
+.action-btn.secondary:hover {
+    background: rgba(99,102,241,0.2);
+    transform: scale(1.05);
+}
+@media (max-width: 768px) {
+    .profile-top {
+        flex-direction: column;
+        text-align: center;
+    }
+    .profile-social {
+        justify-content: center;
+    }
+    .profile-actions {
+        flex-direction: column;
     }
 }

@@ -5,15 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人空间 - xiaowenxu-qwqのBlog</title>
-    <!-- 核心样式 -->
     <link rel="stylesheet" href="style.css">
-    <!-- 第三方样式 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- 左侧边栏 -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-content">
             <nav class="sidebar-nav">
@@ -44,10 +41,8 @@
         </div>
     </aside>
 
-    <!-- 顶部导航栏 -->
     <header class="header">
         <nav class="navbar">
-            <!-- ✅ 修改：Logo添加首页跳转 -->
             <a href="index.html" class="logo" style="text-decoration:none; color:var(--primary-color);">
                 <i class="fas fa-blog"></i>
                 <span>xiaowenxu-qwqのBlog</span>
@@ -63,61 +58,59 @@
         </nav>
     </header>
 
-    <!-- 主内容区 -->
     <main class="container">
-        <!-- 个人信息板块 -->
         <section id="profile" class="profile-section">
-            <div class="profile-header">
-                <h2><i class="fas fa-user-circle"></i> 个人空间</h2>
-                <a href="index.html" class="back-to-home">
-                    <i class="fas fa-arrow-left"></i> 返回主页
-                </a>
-            </div>
-            <div class="profile-content">
-                <div class="profile-avatar-large">
-                    <img src="assets/avatar.jpg" alt="头像" class="avatar-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\'fas fa-user\'></i>'">
+            <div class="profile-card">
+                <div class="profile-top">
+                    <div class="avatar-wrap">
+                        <img src="assets/avatar.jpg" alt="头像" class="profile-avatar" id="profileAvatar" onerror="this.src='assets/default-avatar.jpg'">
+                        <span class="online-badge"></span>
+                    </div>
+                    <div class="profile-meta">
+                        <h2 class="profile-name" id="profileUsername">xiaowenxu-qwq</h2>
+                        <p class="profile-bio">算法竞赛爱好者 · 前端折腾者 · 静态博客玩家</p>
+                        <div class="profile-social">
+                            <a href="https://github.com/xiaowenxu-qwq" target="_blank"><i class="fab fa-github"></i></a>
+                            <a href="#"><i class="fas fa-envelope"></i></a>
+                            <a href="#"><i class="fas fa-rss"></i></a>
+                        </div>
+                    </div>
                 </div>
-                <div class="profile-info">
-                    <h3>xiaowenxu-qwq</h3>
-                    <p class="profile-bio">算法竞赛爱好者 | 前端折腾者 | 静态博客玩家</p>
-                    <div class="profile-stats">
-                        <div class="stat-item">
-                            <!-- ✅ 修改：ID用于JS动态更新数量 -->
-                            <span class="stat-number" id="profilePostCount">6</span>
-                            <span class="stat-label">篇文章</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">5</span>
-                            <span class="stat-label">分类</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-number">2026</span>
-                            <span class="stat-label">入驻年份</span>
-                        </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-num" id="statArticles">0</span>
+                        <span class="stat-label">篇文章</span>
                     </div>
-                    <div class="profile-links">
-                        <a href="https://github.com/xiaowenxu-qwq/xiaowenxu-qwq.github.io" target="_blank" class="profile-link"><i class="fab fa-github"></i> GitHub</a>
-                        <a href="#" class="profile-link"><i class="fas fa-envelope"></i> 联系我</a>
-                        <a href="#" class="profile-link"><i class="fas fa-rss"></i> RSS订阅</a>
+                    <div class="stat-item">
+                        <span class="stat-num" id="statCategories">0</span>
+                        <span class="stat-label">分类</span>
                     </div>
+                    <div class="stat-item">
+                        <span class="stat-num" id="statTags">0</span>
+                        <span class="stat-label">标签</span>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <a href="index.html" class="action-btn primary">
+                        <i class="fas fa-home"></i> 返回主页
+                    </a>
+                    <a href="#profilePosts" class="action-btn secondary">
+                        <i class="fas fa-list"></i> 查看文章
+                    </a>
                 </div>
             </div>
         </section>
 
-        <!-- ✅ 核心修复：个人中心文章列表板块 -->
         <section id="profilePosts" class="posts-section">
             <h2><i class="fas fa-list-alt"></i> 我的文章</h2>
-            <!-- 无搜索结果提示（与main.js中的ID完全对应） -->
             <div id="profileNoResults" class="no-results hidden">
                 <i class="fas fa-search"></i>
                 <p>未找到匹配的文章</p>
                 <span class="no-results-hint">尝试使用其他关键词</span>
             </div>
-            <!-- 文章容器（必须与main.js中的渲染目标ID一致） -->
             <div class="posts-grid" id="profilePostsContainer"></div>
         </section>
 
-        <!-- ✅ 新增：文章详情容器（个人中心点击文章后显示） -->
         <section id="postDetail" class="post-detail hidden">
             <button class="back-btn" id="backBtn">
                 <i class="fas fa-arrow-left"></i> 返回列表
@@ -126,7 +119,6 @@
         </section>
     </main>
 
-    <!-- 页脚 -->
     <footer class="footer">
         <p>&copy; 2024 xiaowenxu-qwqのBlog | 使用HTML/CSS/JS构建</p>
         <div class="social-links">
@@ -136,16 +128,10 @@
         </div>
     </footer>
 
-    <!-- ✅ 依赖库引入（顺序不可颠倒） -->
-    <!-- 代码高亮 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-    <!-- Markdown解析 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
-    <!-- LaTeX公式渲染 -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
-    
-    <!-- ✅ 主逻辑引入（必须为module类型，路径相对于当前html） -->
     <script type="module" src="js/main.js"></script>
 </body>
 </html>

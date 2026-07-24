@@ -1,8 +1,6 @@
 /**
- * 主入口文件 - 超级修复版（含详细日志）
+ * 主入口文件 - 完整版
  */
-
-// 安全获取全局库
 const marked = window.marked;
 const hljs = window.hljs;
 const renderMathInElement = window.renderMathInElement;
@@ -14,13 +12,11 @@ import { toggleTheme, initializeTheme } from './components/theme.js';
 import { spawnKangaroos } from './utils/kangaroo.js';
 import { smoothScrollTo } from './utils/helpers.js';
 
-// ======================= 全局状态 =======================
 let allPosts = [];
 let filteredPosts = [];
 const MAX_HISTORY = 5;
 let memoryStorage = { theme: null, searchHistory: [] };
 
-// ======================= 工具函数 =======================
 const safeGetElement = (id) => document.getElementById(id);
 
 function isLocalStorageSupported() {
@@ -34,7 +30,6 @@ function isLocalStorageSupported() {
 }
 const canUseLocalStorage = isLocalStorageSupported();
 
-// ======================= DOM 缓存 =======================
 const searchInput = safeGetElement('searchInput');
 const searchClear = safeGetElement('searchClear');
 const searchHistory = safeGetElement('searchHistory');
@@ -42,34 +37,31 @@ const searchHistoryList = safeGetElement('searchHistoryList');
 const clearHistoryBtn = safeGetElement('clearHistory');
 let backToTopBtn = null;
 
-// ======================= 初始化 =======================
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 博客初始化开始...');
     console.log('📍 当前路径:', window.location.pathname);
     console.log('📦 原始 posts 数据:', posts?.length || 0, '篇');
 
-    // 赋值数据
     allPosts = Array.isArray(posts) ? [...posts] : [];
     filteredPosts = [...allPosts];
     console.log('✅ allPosts 已填充，长度:', allPosts.length);
 
-    // 初始化基础功能
     initializeTheme();
     setupEventListeners();
     
-    // 高亮代码
     requestAnimationFrame(() => {
         if (hljs) hljs.highlightAll();
     });
 
-    // ⭐ 核心修复：统一渲染调度（增加容错）
     try {
         forceRenderAllPages();
     } catch (err) {
         console.error('❌ 渲染过程中发生错误:', err);
     }
 
-    // 通用组件
+    // 新增：渲染个人中心统计
+    renderProfileStats();
+
     createProgressBar();
     createBackToTopButton();
     if (canUseLocalStorage) loadSearchHistory();
@@ -77,18 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ 初始化完成');
 });
 
-// ======================= 强制渲染（核心修复 + 详细日志） =======================
 function forceRenderAllPages() {
-    // 判断是否为个人中心页
     const hasProfileElement = !!document.getElementById('profile');
     const isProfilePage = hasProfileElement || window.location.pathname.includes('profile.html');
     const isHomePage = !isProfilePage;
 
     console.log(`🔀 页面类型：${isProfilePage ? '个人中心' : '主页'}`);
-    console.log(`   - hasProfileElement: ${hasProfileElement}`);
-    console.log(`   - pathname: ${window.location.pathname}`);
 
-    // --- 显示/隐藏区块 ---
     const homeSection = safeGetElement('home');
     const aboutSection = safeGetElement('about');
     const profileSection = safeGetElement('profile');
@@ -99,33 +86,17 @@ function forceRenderAllPages() {
     if (profileSection) profileSection.style.display = isProfilePage ? 'block' : 'none';
     if (profilePostsSection) profilePostsSection.style.display = isProfilePage ? 'block' : 'none';
 
-    // --- 渲染文章 ---
     if (isProfilePage) {
         console.log('👤 进入个人中心渲染分支');
         const container = safeGetElement('profilePostsContainer');
         if (!container) {
-            console.error('❌ 个人中心容器 #profilePostsContainer 不存在！请检查 profile.html');
+            console.error('❌ 个人中心容器 #profilePostsContainer 不存在！');
             return;
         }
-        console.log('✅ 容器 #profilePostsContainer 已找到');
-        console.log('📄 即将渲染的文章数:', allPosts.length);
-        
-        // 先清空容器，确保干净
         container.innerHTML = '';
-        
-        // 调用渲染函数
         renderPosts(allPosts, 'profilePostsContainer');
-        
-        // 隐藏无结果提示
         const noRes = safeGetElement('profileNoResults');
         if (noRes) noRes.classList.add('hidden');
-
-        // ✅ 新增：同步更新个人中心文章统计数
-        const profilePostCount = safeGetElement('profilePostCount');
-        if (profilePostCount) {
-            profilePostCount.textContent = allPosts.length;
-        }
-        
         console.log('✅ 个人中心渲染调用完成');
     } else {
         const container = safeGetElement('postsContainer');
@@ -136,9 +107,7 @@ function forceRenderAllPages() {
     }
 }
 
-// ======================= 事件监听 =======================
 function setupEventListeners() {
-    // 文章点击（支持两个容器）
     const containers = ['postsContainer', 'profilePostsContainer']
         .map(id => safeGetElement(id))
         .filter(Boolean);
@@ -154,11 +123,9 @@ function setupEventListeners() {
         });
     });
 
-    // 主题切换
     const themeToggle = safeGetElement('themeToggle');
     if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
 
-    // 返回按钮
     const backBtn = safeGetElement('backBtn');
     if (backBtn) {
         backBtn.addEventListener('click', () => {
@@ -167,7 +134,6 @@ function setupEventListeners() {
         });
     }
 
-    // 搜索逻辑（仅主页）
     if (searchInput && canUseLocalStorage) {
         searchInput.addEventListener('input', handleSearchInput);
         searchInput.addEventListener('focus', () => {
@@ -211,25 +177,20 @@ function setupEventListeners() {
         clearHistoryBtn.addEventListener('click', clearSearchHistory);
     }
 
-    // 袋鼠特效
     document.addEventListener('click', (e) => {
         spawnKangaroos(e.clientX, e.clientY);
     });
 
-    // 滚动
     window.addEventListener('scroll', handleScroll);
 
-    // 侧边栏导航（统一处理）
     document.querySelectorAll('.sidebar-link').forEach(link => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
-            // 个人中心内点击任何链接，跳转到主页
             if (window.location.pathname.includes('profile.html')) {
                 e.preventDefault();
                 window.location.href = href.startsWith('#') ? 'index.html' : href;
                 return;
             }
-            // 主页内点击“主页”或锚点
             if (href.includes('#home') || href === 'index.html' || href === '#home') {
                 e.preventDefault();
                 exitReadingMode();
@@ -242,7 +203,6 @@ function setupEventListeners() {
                 }
                 return;
             }
-            // 阅读模式下的锚点
             const postDetail = safeGetElement('postDetail');
             if (postDetail && !postDetail.classList.contains('hidden')) {
                 e.preventDefault();
@@ -255,7 +215,6 @@ function setupEventListeners() {
                 }, 100);
                 return;
             }
-            // 普通锚点
             if (href.startsWith('#')) {
                 e.preventDefault();
                 document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
@@ -264,7 +223,6 @@ function setupEventListeners() {
     });
 }
 
-// ======================= 搜索函数 =======================
 function handleSearchInput() {
     if (!searchInput) return;
     const keyword = searchInput.value.trim();
@@ -282,10 +240,8 @@ function filterPosts(keyword) {
             post.tags.some(tag => tag.toLowerCase().includes(keyword.toLowerCase()))
         );
     }
-    // 主页容器
     const homeContainer = safeGetElement('postsContainer');
     if (homeContainer) renderPosts(filteredPosts, 'postsContainer');
-    // 个人中心容器（同步更新，但一般不会在个人中心搜索）
     const profileContainer = safeGetElement('profilePostsContainer');
     if (profileContainer) renderPosts(filteredPosts, 'profilePostsContainer');
 
@@ -301,7 +257,6 @@ function toggleClearButton(keyword) {
     }
 }
 
-// ======================= 搜索历史 =======================
 function loadSearchHistory() {
     if (!canUseLocalStorage) return;
     try {
@@ -346,7 +301,6 @@ function renderSearchHistory(history) {
     });
 }
 
-// ======================= 阅读模式相关 =======================
 function createProgressBar() {
     if (document.getElementById('readingProgressBar')) return;
     const bar = document.createElement('div');
@@ -464,4 +418,36 @@ function createBackToTopButton() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     document.body.appendChild(backToTopBtn);
+}
+
+// ===== 新增：个人中心统计渲染 =====
+function renderProfileStats() {
+    const articlesEl = document.getElementById('statArticles');
+    const categoriesEl = document.getElementById('statCategories');
+    const tagsEl = document.getElementById('statTags');
+
+    const categories = [...new Set(allPosts.map(p => p.category))];
+    const tags = [...new Set(allPosts.flatMap(p => p.tags || []))];
+
+    animateNum(articlesEl, allPosts.length);
+    animateNum(categoriesEl, categories.length);
+    animateNum(tagsEl, tags.length);
+}
+
+function animateNum(el, target) {
+    if (!el) return;
+    if (target === 0) {
+        el.textContent = '0';
+        return;
+    }
+    let current = 0;
+    const step = target / 30;
+    const timer = setInterval(() => {
+        current += step;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        el.textContent = Math.floor(current);
+    }, 20);
 }
