@@ -86,18 +86,19 @@
         <section id="home" class="hero">
             <h1>探索代码的无限可能</h1>
             <p>记录开发心得，分享技术见解</p>
+            <!-- ✅ 修改：统计项改为动态ID，移除写死的创建年份，新增标签统计 -->
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number">5</span>
+                    <span class="stat-number" id="home-stat-articles">0</span>
                     <span class="stat-label">篇文章</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">4</span>
+                    <span class="stat-number" id="home-stat-categories">0</span>
                     <span class="stat-label">分类</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">2026</span>
-                    <span class="stat-label">创建年份</span>
+                    <span class="stat-number" id="home-stat-tags">0</span>
+                    <span class="stat-label">标签</span>
                 </div>
             </div>
         </section>

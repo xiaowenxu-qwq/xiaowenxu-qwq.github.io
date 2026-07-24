@@ -311,26 +311,44 @@ body {
     margin-bottom: 1rem;
 }
 
-.stats {
+/* ✅ 新增：首页统计样式优化（适配夜间模式+响应式） */
+.hero .stats {
     display: flex;
     justify-content: center;
-    gap: 3rem;
+    gap: clamp(2rem, 5vw, 3rem);
     margin-top: 2rem;
+    flex-wrap: wrap;
 }
 
-.stat-item {
+.hero .stat-item {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    min-width: 100px;
 }
 
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: bold;
+.hero .stat-number {
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
 }
 
-.stat-label {
-    font-size: 0.9rem;
-    opacity: 0.9;
+.hero .stat-label {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+/* 小屏幕适配 */
+@media (max-width: 480px) {
+    .hero .stats {
+        gap: 1.5rem;
+    }
+    .hero .stat-item {
+        min-width: 80px;
+    }
 }
 
 .posts-section h2 {
@@ -914,13 +932,11 @@ body {
 
 /* ===== 个人中心美化样式（完美适配日夜模式）===== */
 .profile-card {
-    /* 用全局卡片背景变量，自动适配日夜模式 */
     background: var(--card-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: 20px;
     padding: 2.5rem;
-    /* 用全局边框变量 */
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow);
     transition: var(--transition);
@@ -945,19 +961,16 @@ body {
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    /* 头像边框用全局变量，夜间模式自动适配 */
     border: 4px solid rgba(255, 255, 255, 0.6);
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     transition: transform 0.3s ease;
 }
-/* 夜间模式：头像边框调整为半透明白色，避免突兀 */
 .dark-theme .profile-avatar {
     border-color: rgba(255, 255, 255, 0.2);
 }
 .profile-avatar:hover {
     transform: scale(1.05);
 }
-/* 在线状态徽章：边框跟随卡片背景，不会出现白边 */
 .online-badge {
     position: absolute;
     bottom: 8px;
@@ -973,14 +986,12 @@ body {
 .profile-meta {
     flex: 1;
 }
-/* 用户名用全局文字变量，自动适配日夜模式 */
 .profile-name {
     font-size: 1.8rem;
     font-weight: 700;
     color: var(--text-color);
     margin: 0 0 0.5rem 0;
 }
-/* 简介文字：日间用灰色，夜间调亮避免看不清 */
 .profile-bio {
     color: #6b7280;
     margin: 0 0 1rem 0;
@@ -998,7 +1009,6 @@ body {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    /* 社交按钮用主色半透明背景，自动适配 */
     background: rgba(37, 99, 235, 0.1);
     color: var(--primary-color);
     display: flex;
@@ -1011,7 +1021,6 @@ body {
     color: #fff;
     transform: translateY(-2px);
 }
-/* 夜间模式：社交按钮背景加深 */
 .dark-theme .profile-social a {
     background: rgba(59, 130, 246, 0.15);
 }
@@ -1027,7 +1036,6 @@ body {
 .profile-stats .stat-item {
     text-align: center;
 }
-/* 统计数字用主色变量，日夜模式自动切换 */
 .profile-stats .stat-num {
     display: block;
     font-size: 1.8rem;
@@ -1035,7 +1043,6 @@ body {
     color: var(--primary-color);
     transition: all 0.5s ease;
 }
-/* 统计标签：日间灰色，夜间调亮 */
 .profile-stats .stat-label {
     font-size: 0.85rem;
     color: #6b7280;
@@ -1068,7 +1075,6 @@ body {
     transform: scale(1.05);
 }
 .action-btn.secondary {
-    /* 次要按钮用主色半透明，自动适配 */
     background: rgba(37, 99, 235, 0.1);
     color: var(--primary-color);
 }
@@ -1076,7 +1082,6 @@ body {
     background: rgba(37, 99, 235, 0.2);
     transform: scale(1.05);
 }
-/* 夜间模式：次要按钮背景加深 */
 .dark-theme .action-btn.secondary {
     background: rgba(59, 130, 246, 0.15);
 }
@@ -1084,7 +1089,6 @@ body {
     background: rgba(59, 130, 246, 0.25);
 }
 
-/* 移动端适配 */
 @media (max-width: 768px) {
     .profile-top {
         flex-direction: column;

@@ -59,8 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('❌ 渲染过程中发生错误:', err);
     }
 
-    // 新增：渲染个人中心统计
-    renderProfileStats();
+    // 统计渲染
+    renderProfileStats(); // 个人中心统计
+    initHomeStats(); // ✅ 新增：首页统计
 
     createProgressBar();
     createBackToTopButton();
@@ -420,7 +421,8 @@ function createBackToTopButton() {
     document.body.appendChild(backToTopBtn);
 }
 
-// ===== 新增：个人中心统计渲染 =====
+// ===== 统计渲染相关 =====
+// 个人中心统计渲染
 function renderProfileStats() {
     const articlesEl = document.getElementById('statArticles');
     const categoriesEl = document.getElementById('statCategories');
@@ -434,6 +436,35 @@ function renderProfileStats() {
     animateNum(tagsEl, tags.length);
 }
 
+// ✅ 新增：首页统计渲染
+function initHomeStats() {
+    const articlesEl = document.getElementById('home-stat-articles');
+    const categoriesEl = document.getElementById('home-stat-categories');
+    const tagsEl = document.getElementById('home-stat-tags');
+
+    // 不在首页则不执行
+    if (!articlesEl) return;
+
+    // 计算统计数据
+    const categories = new Set();
+    allPosts.forEach(post => {
+        if (post.category) categories.add(post.category);
+    });
+
+    const tags = new Set();
+    allPosts.forEach(post => {
+        if (Array.isArray(post.tags)) {
+            post.tags.forEach(tag => tags.add(tag));
+        }
+    });
+
+    // 执行数字滚动动画
+    animateNum(articlesEl, allPosts.length);
+    animateNum(categoriesEl, categories.size);
+    animateNum(tagsEl, tags.size);
+}
+
+// 数字滚动动画
 function animateNum(el, target) {
     if (!el) return;
     if (target === 0) {
