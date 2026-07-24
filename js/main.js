@@ -1,7 +1,11 @@
 /**
- * 主入口文件 - 强力修复版
- * 针对个人中心渲染问题提供双重保障
+ * 主入口文件 - 超级修复版（含详细日志）
  */
+
+// 安全获取全局库
+const marked = window.marked;
+const hljs = window.hljs;
+const renderMathInElement = window.renderMathInElement;
 
 import { posts } from './data/posts.js';
 import { renderPosts } from './components/postsList.js';
@@ -42,21 +46,28 @@ let backToTopBtn = null;
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 博客初始化开始...');
     console.log('📍 当前路径:', window.location.pathname);
-    console.log('📦 文章数据:', posts?.length || 0, '篇');
+    console.log('📦 原始 posts 数据:', posts?.length || 0, '篇');
 
     // 赋值数据
     allPosts = Array.isArray(posts) ? [...posts] : [];
     filteredPosts = [...allPosts];
+    console.log('✅ allPosts 已填充，长度:', allPosts.length);
 
     // 初始化基础功能
     initializeTheme();
     setupEventListeners();
     
     // 高亮代码
-    requestAnimationFrame(() => hljs.highlightAll());
+    requestAnimationFrame(() => {
+        if (hljs) hljs.highlightAll();
+    });
 
-    // ⭐ 核心修复：统一渲染调度
-    forceRenderAllPages();
+    // ⭐ 核心修复：统一渲染调度（增加容错）
+    try {
+        forceRenderAllPages();
+    } catch (err) {
+        console.error('❌ 渲染过程中发生错误:', err);
+    }
 
     // 通用组件
     createProgressBar();
@@ -66,14 +77,16 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ 初始化完成');
 });
 
-// ======================= 强制渲染（核心修复） =======================
+// ======================= 强制渲染（核心修复 + 详细日志） =======================
 function forceRenderAllPages() {
-    // 判断是否为个人中心页：检查 DOM 中是否存在 profile 元素
+    // 判断是否为个人中心页
     const hasProfileElement = !!document.getElementById('profile');
     const isProfilePage = hasProfileElement || window.location.pathname.includes('profile.html');
     const isHomePage = !isProfilePage;
 
     console.log(`🔀 页面类型：${isProfilePage ? '个人中心' : '主页'}`);
+    console.log(`   - hasProfileElement: ${hasProfileElement}`);
+    console.log(`   - pathname: ${window.location.pathname}`);
 
     // --- 显示/隐藏区块 ---
     const homeSection = safeGetElement('home');
@@ -88,23 +101,40 @@ function forceRenderAllPages() {
 
     // --- 渲染文章 ---
     if (isProfilePage) {
+        console.log('👤 进入个人中心渲染分支');
         const container = safeGetElement('profilePostsContainer');
         if (!container) {
             console.error('❌ 个人中心容器 #profilePostsContainer 不存在！请检查 profile.html');
+            // 尝试用备用选择器
+            const altContainer = document.querySelector('.posts-grid#profilePostsContainer');
+            if (altContainer) {
+                console.log('✅ 通过备用选择器找到容器');
+                renderPosts(allPosts, 'profilePostsContainer');
+            } else {
+                console.error('❌ 完全找不到容器，渲染中止');
+            }
             return;
         }
-        console.log('👤 渲染个人中心，文章数:', allPosts.length);
+        console.log('✅ 容器 #profilePostsContainer 已找到');
+        console.log('📄 即将渲染的文章数:', allPosts.length);
+        
+        // 先清空容器，确保干净
+        container.innerHTML = '';
+        
+        // 调用渲染函数
         renderPosts(allPosts, 'profilePostsContainer');
-        // 同时隐藏无结果提示（如果有）
+        
+        // 隐藏无结果提示
         const noRes = safeGetElement('profileNoResults');
         if (noRes) noRes.classList.add('hidden');
+        
+        console.log('✅ 个人中心渲染调用完成');
     } else {
         const container = safeGetElement('postsContainer');
         if (container) {
             console.log('🏠 渲染主页，文章数:', filteredPosts.length);
             renderPosts(filteredPosts, 'postsContainer');
         }
-        // 主页无结果提示由搜索逻辑控制
     }
 }
 
@@ -257,11 +287,10 @@ function filterPosts(keyword) {
     // 主页容器
     const homeContainer = safeGetElement('postsContainer');
     if (homeContainer) renderPosts(filteredPosts, 'postsContainer');
-    // 个人中心容器（搜索时也同步过滤，但个人中心通常不主动搜索，为保持一致性也更新）
+    // 个人中心容器（同步更新，但一般不会在个人中心搜索）
     const profileContainer = safeGetElement('profilePostsContainer');
     if (profileContainer) renderPosts(filteredPosts, 'profilePostsContainer');
 
-    // 无结果提示
     const noResults = safeGetElement('noResults');
     const profileNoResults = safeGetElement('profileNoResults');
     if (noResults) noResults.classList.toggle('hidden', !(filteredPosts.length === 0 && keyword));
