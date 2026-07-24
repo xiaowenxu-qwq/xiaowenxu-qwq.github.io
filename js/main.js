@@ -105,14 +105,6 @@ function forceRenderAllPages() {
         const container = safeGetElement('profilePostsContainer');
         if (!container) {
             console.error('❌ 个人中心容器 #profilePostsContainer 不存在！请检查 profile.html');
-            // 尝试用备用选择器
-            const altContainer = document.querySelector('.posts-grid#profilePostsContainer');
-            if (altContainer) {
-                console.log('✅ 通过备用选择器找到容器');
-                renderPosts(allPosts, 'profilePostsContainer');
-            } else {
-                console.error('❌ 完全找不到容器，渲染中止');
-            }
             return;
         }
         console.log('✅ 容器 #profilePostsContainer 已找到');
@@ -127,6 +119,12 @@ function forceRenderAllPages() {
         // 隐藏无结果提示
         const noRes = safeGetElement('profileNoResults');
         if (noRes) noRes.classList.add('hidden');
+
+        // ✅ 新增：同步更新个人中心文章统计数
+        const profilePostCount = safeGetElement('profilePostCount');
+        if (profilePostCount) {
+            profilePostCount.textContent = allPosts.length;
+        }
         
         console.log('✅ 个人中心渲染调用完成');
     } else {

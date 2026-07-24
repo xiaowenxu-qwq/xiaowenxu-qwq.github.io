@@ -47,10 +47,11 @@
     <!-- 顶部导航栏 -->
     <header class="header">
         <nav class="navbar">
-            <div class="logo">
+            <!-- ✅ 修改：Logo添加首页跳转 -->
+            <a href="index.html" class="logo" style="text-decoration:none; color:var(--primary-color);">
                 <i class="fas fa-blog"></i>
                 <span>xiaowenxu-qwqのBlog</span>
-            </div>
+            </a>
             <div class="navbar-right">
                 <button class="theme-toggle" id="themeToggle">
                     <i class="fas fa-moon"></i>
@@ -81,7 +82,8 @@
                     <p class="profile-bio">算法竞赛爱好者 | 前端折腾者 | 静态博客玩家</p>
                     <div class="profile-stats">
                         <div class="stat-item">
-                            <span class="stat-number">6</span>
+                            <!-- ✅ 修改：ID用于JS动态更新数量 -->
+                            <span class="stat-number" id="profilePostCount">6</span>
                             <span class="stat-label">篇文章</span>
                         </div>
                         <div class="stat-item">
@@ -113,6 +115,14 @@
             </div>
             <!-- 文章容器（必须与main.js中的渲染目标ID一致） -->
             <div class="posts-grid" id="profilePostsContainer"></div>
+        </section>
+
+        <!-- ✅ 新增：文章详情容器（个人中心点击文章后显示） -->
+        <section id="postDetail" class="post-detail hidden">
+            <button class="back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i> 返回列表
+            </button>
+            <div class="post-content" id="postContent"></div>
         </section>
     </main>
 

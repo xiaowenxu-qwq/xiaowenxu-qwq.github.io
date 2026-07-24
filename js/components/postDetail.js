@@ -4,9 +4,7 @@ export function showPostDetail(postId, posts) {
     
     const postContent = document.getElementById('postContent');
     const postDetail = document.getElementById('postDetail');
-    const postsSection = document.getElementById('posts');
-    
-    if (!postContent || !postDetail || !postsSection) return;
+    if (!postContent || !postDetail) return;
     
     // 使用marked解析Markdown
     postContent.innerHTML = marked.parse(post.content);
@@ -16,30 +14,48 @@ export function showPostDetail(postId, posts) {
         hljs.highlightElement(block);
     });
     
-    // ===== 新增：渲染 LaTeX 公式 =====
-    renderMathInElement(postContent, {
-        delimiters: [
-            { left: '$$', right: '$$', display: true },  // 块级公式
-            { left: '$', right: '$', display: false },   // 行内公式
-            { left: '\\(', right: '\\)', display: false },
-            { left: '\\[', right: '\\]', display: true }
-        ],
-        throwOnError: false // 避免报错导致页面白屏
-    });
-    // ================================
+    // ===== 渲染 LaTeX 公式 =====
+    if (window.renderMathInElement) {
+        window.renderMathInElement(postContent, {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '$', right: '$', display: false },
+                { left: '\\(', right: '\\)', display: false },
+                { left: '\\[', right: '\\]', display: true }
+            ],
+            throwOnError: false
+        });
+    }
+    // ==========================
     
-    // 显示详情，隐藏列表
-    postsSection.classList.add('hidden');
+    // ✅ 核心修复：适配双页面逻辑
+    const isProfilePage = window.location.pathname.includes('profile.html');
+    if (isProfilePage) {
+        // 个人中心：隐藏个人中心文章列表
+        const profilePostsSection = document.getElementById('profilePosts');
+        if (profilePostsSection) profilePostsSection.classList.add('hidden');
+    } else {
+        // 首页：隐藏首页文章列表
+        const postsSection = document.getElementById('posts');
+        if (postsSection) postsSection.classList.add('hidden');
+    }
+    
+    // 显示详情页
     postDetail.classList.remove('hidden');
-    
-    // 滚动到顶部
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 export function hidePostDetail() {
     const postDetail = document.getElementById('postDetail');
-    const postsSection = document.getElementById('posts');
-    
     if (postDetail) postDetail.classList.add('hidden');
-    if (postsSection) postsSection.classList.remove('hidden');
+    
+    // ✅ 核心修复：返回时显示对应列表
+    const isProfilePage = window.location.pathname.includes('profile.html');
+    if (isProfilePage) {
+        const profilePostsSection = document.getElementById('profilePosts');
+        if (profilePostsSection) profilePostsSection.classList.remove('hidden');
+    } else {
+        const postsSection = document.getElementById('posts');
+        if (postsSection) postsSection.classList.remove('hidden');
+    }
 }
